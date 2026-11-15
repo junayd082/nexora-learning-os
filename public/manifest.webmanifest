@@ -1,0 +1,9 @@
+{
+  "name": "NEXORA — The Learning Operating System",
+  "short_name": "NEXORA",
+  "start_url": "/home",
+  "display": "standalone",
+  "background_color": "#f7f6f2",
+  "theme_color": "#181a1f",
+  "icons": [{ "src": "/icon.svg", "sizes": "any", "type": "image/svg+xml" }]
+}

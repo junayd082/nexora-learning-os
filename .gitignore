@@ -1,0 +1,16 @@
+# dependencies / build output
+node_modules
+.next
+out
+*.tsbuildinfo
+next-env.d.ts
+
+# environment — never commit real env files
+.env
+.env*.local
+.env.production
+!.env.example
+
+# deploy tooling / OS
+.vercel
+.DS_Store

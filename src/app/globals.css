@@ -1,0 +1,409 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ==========================================================================
+   NEXORA design tokens — "ambient darkness".
+   Carbon surfaces lit by smoked ember, signal red, violet and magenta light.
+   Rule of thumb: 80% dark neutral · 15% atmospheric light · 5% strong colour.
+   ========================================================================== */
+:root {
+  /* Carbon (backgrounds) */
+  --nx-carbon-0: 9 10 13;      /* #090A0D */
+  --nx-carbon-1: 13 15 19;     /* #0D0F13 */
+  --nx-carbon-2: 17 19 24;     /* #111318 */
+  --nx-carbon-3: 23 25 32;     /* #171920 */
+  /* Light sources */
+  --nx-ember: 255 122 26;      /* #FF7A1A */
+  --nx-ember-2: 216 90 18;     /* #D85A12 */
+  --nx-ember-3: 143 53 13;     /* #8F350D */
+  --nx-signal: 228 59 79;      /* #E43B4F */
+  --nx-signal-3: 91 23 36;     /* #5B1724 */
+  --nx-violet: 135 88 255;     /* #8758FF */
+  --nx-violet-2: 98 57 215;    /* #6239D7 */
+  --nx-violet-3: 55 32 122;    /* #37207A */
+  --nx-magenta: 192 68 183;    /* #C044B7 */
+  --nx-magenta-3: 66 24 63;    /* #42183F */
+
+  /* Semantic tokens used by every component */
+  --bg: var(--nx-carbon-0);
+  --panel: var(--nx-carbon-2);
+  --sunk: var(--nx-carbon-1);
+  --raise: var(--nx-carbon-3);
+  --line: 255 255 255;          /* used with low alpha, see .border-line */
+  --line-a: 0.08;
+  --ink: 238 234 228;
+  --muted: 168 164 160;
+  --faint: 118 116 120;
+  --accent: var(--nx-ember);
+  --accent-ink: 20 10 4;
+  --ok: 92 196 140;
+  --warn: 240 170 70;
+  --bad: 240 98 112;
+
+  /* Materials */
+  --mat-smoke: rgb(var(--nx-carbon-2) / 0.72);
+  --mat-obsidian: rgb(var(--nx-carbon-1) / 0.88);
+  --mat-ember-glass: rgb(var(--nx-ember) / 0.09);
+  --mat-violet-glass: rgb(var(--nx-violet) / 0.09);
+
+  /* Shadows */
+  --shadow-smoke: 0 1px 0 rgb(255 255 255 / 0.035) inset, 0 18px 40px -18px rgb(0 0 0 / 0.75);
+  --shadow-ember: 0 0 0 1px rgb(var(--nx-ember) / 0.18), 0 18px 50px -20px rgb(var(--nx-ember) / 0.35);
+  --shadow-violet: 0 0 0 1px rgb(var(--nx-violet) / 0.2), 0 18px 50px -20px rgb(var(--nx-violet) / 0.35);
+
+  /* Motion */
+  --t-instant: 100ms;
+  --t-fast: 180ms;
+  --t-normal: 280ms;
+  --ease: cubic-bezier(0.22, 0.8, 0.24, 1);
+  --ambient: 32s;
+
+  color-scheme: dark;
+}
+
+/* Optional light theme (Settings → Appearance). Same structure, warm paper. */
+:root[data-theme='light'] {
+  --bg: 246 242 237; --panel: 255 253 250; --sunk: 238 233 226; --raise: 255 255 255;
+  --line: 40 24 16; --line-a: 0.1;
+  --ink: 28 22 20; --muted: 98 90 86; --faint: 140 132 128;
+  --accent: 200 78 12; --accent-ink: 255 255 255;
+  --ok: 30 122 76; --warn: 166 103 8; --bad: 180 40 40;
+  --mat-smoke: rgb(255 253 250 / 0.82);
+  --mat-obsidian: rgb(255 253 250 / 0.92);
+  --shadow-smoke: 0 1px 0 rgb(255 255 255 / 0.7) inset, 0 14px 30px -18px rgb(60 30 10 / 0.25);
+  color-scheme: light;
+}
+
+html, body { background: rgb(var(--bg)); color: rgb(var(--ink)); overflow-x: clip; }
+body { -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+::selection { background: rgb(var(--nx-ember) / 0.35); color: rgb(var(--ink)); }
+:focus-visible { outline: 2px solid rgb(var(--nx-ember)); outline-offset: 2px; border-radius: 4px; }
+* { border-color: rgb(var(--line) / var(--line-a)); }
+
+@layer components {
+  .btn { @apply inline-flex items-center justify-center gap-2 rounded-md border px-3 h-9 text-sm font-medium text-ink disabled:opacity-50 disabled:pointer-events-none;
+    background: rgb(var(--raise) / 0.7); border-color: rgb(var(--line) / calc(var(--line-a) + 0.04));
+    transition: background var(--t-fast) var(--ease), border-color var(--t-fast) var(--ease), box-shadow var(--t-fast) var(--ease); }
+  .btn:hover { background: rgb(var(--raise)); border-color: rgb(var(--line) / calc(var(--line-a) + 0.1)); }
+  .btn-primary { @apply btn font-semibold; color: rgb(var(--accent-ink)); border-color: transparent;
+    background: linear-gradient(180deg, rgb(255 146 64), rgb(var(--nx-ember)) 55%, rgb(var(--nx-ember-2)));
+    box-shadow: 0 1px 0 rgb(255 255 255 / 0.25) inset, 0 8px 24px -10px rgb(var(--nx-ember) / 0.7); }
+  .btn-primary:hover { background: linear-gradient(180deg, rgb(255 160 84), rgb(255 132 40) 55%, rgb(var(--nx-ember))); border-color: transparent;
+    box-shadow: 0 1px 0 rgb(255 255 255 / 0.3) inset, 0 10px 30px -10px rgb(var(--nx-ember) / 0.85); }
+  .btn-ghost { @apply btn; background: transparent; border-color: transparent; }
+  .btn-ghost:hover { background: rgb(var(--line) / 0.06); border-color: transparent; }
+  .btn-sm { @apply h-7 px-2 text-xs; }
+  .btn-lg { @apply h-11 px-5 text-[15px]; }
+  .input { @apply block w-full rounded-md border px-3 h-9 text-sm text-ink placeholder:text-faint focus:outline-none;
+    background: rgb(var(--sunk) / 0.8); border-color: rgb(var(--line) / calc(var(--line-a) + 0.04)); transition: border-color var(--t-fast), box-shadow var(--t-fast); }
+  .input:focus { border-color: rgb(var(--nx-ember) / 0.7); box-shadow: 0 0 0 3px rgb(var(--nx-ember) / 0.15); }
+  .textarea { @apply input h-auto py-2 min-h-[96px]; }
+  .label { @apply block text-xs font-medium text-muted mb-1; }
+
+  /* Surfaces: 1 = utility, 2 = interactive card, 3 = overlay */
+  .card { @apply rounded-lg border; background: var(--mat-smoke); box-shadow: var(--shadow-smoke); }
+  .surface-1 { background: var(--mat-obsidian); }
+  .surface-3 { @apply rounded-xl border; background: rgb(var(--raise) / 0.96); box-shadow: 0 30px 80px -20px rgb(0 0 0 / 0.8), 0 0 0 1px rgb(var(--line) / 0.06); }
+
+  .eyebrow { @apply font-mono text-2xs uppercase tracking-[0.16em] text-muted; }
+  .h1 { @apply text-[26px] font-semibold tracking-tight; }
+  .h2 { @apply text-[15px] font-semibold tracking-tight; }
+  .display { @apply font-semibold tracking-[-0.03em]; }
+  .chip { @apply inline-flex items-center gap-1 rounded border px-1.5 h-5 text-2xs font-mono text-muted whitespace-nowrap; background: rgb(var(--line) / 0.03); }
+  .table { @apply w-full text-sm; }
+  .table th { @apply text-left font-mono text-2xs uppercase tracking-wider text-muted font-normal px-3 py-2 border-b; }
+  .table td { @apply px-3 py-2.5 border-b align-top; }
+  .table tr:last-child td { @apply border-b-0; }
+  .table tbody tr { transition: background var(--t-fast); }
+  .table tbody tr:hover { background: rgb(var(--line) / 0.025); }
+  .kbd { @apply inline-flex items-center rounded border px-1 font-mono text-2xs text-muted; background: rgb(var(--sunk)); }
+  .ember-text { color: rgb(var(--nx-ember)); }
+  .violet-text { color: rgb(167 132 255); }
+  .live-dot { @apply inline-block h-2 w-2 rounded-full; background: rgb(var(--nx-ember)); box-shadow: 0 0 0 0 rgb(var(--nx-ember) / 0.6); animation: nx-pulse 2.4s var(--ease) infinite; }
+
+  /* Drafting grid that fades out — painted on a pseudo-element so the mask never touches content. */
+  .grid-paper { position: relative; isolation: isolate; }
+  .grid-paper::before { content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none;
+    background-image:
+      linear-gradient(rgb(var(--line) / 0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgb(var(--line) / 0.05) 1px, transparent 1px);
+    background-size: 48px 48px;
+    -webkit-mask-image: radial-gradient(ellipse at 30% 40%, black 15%, transparent 72%);
+    mask-image: radial-gradient(ellipse at 30% 40%, black 15%, transparent 72%); }
+
+  /* Light that moves across a surface under the cursor (desktop only). */
+  .lit { position: relative; isolation: isolate; }
+  .lit::before { content: ''; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; z-index: -1; opacity: 0;
+    background: radial-gradient(420px circle at var(--mx, 50%) var(--my, 50%), rgb(var(--glow, var(--nx-ember)) / 0.11), transparent 45%);
+    transition: opacity var(--t-normal) var(--ease); }
+  .lit:hover::before { opacity: 1; }
+  .lit-edge { transition: border-color var(--t-normal) var(--ease), box-shadow var(--t-normal) var(--ease), transform var(--t-normal) var(--ease); }
+  .lit-edge:hover { border-color: rgb(var(--glow, var(--nx-ember)) / 0.35); box-shadow: var(--shadow-smoke), 0 20px 60px -24px rgb(var(--glow, var(--nx-ember)) / 0.45); }
+}
+
+/* ==========================================================================
+   AmbientField — the living background
+   ========================================================================== */
+.nx-field { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; background: rgb(var(--bg)); }
+.nx-field .blob { position: absolute; border-radius: 50%; will-change: transform; transition: background 1.6s var(--ease), opacity 1.6s var(--ease); }
+.nx-field .b1 { width: 70vmax; height: 70vmax; left: -22vmax; bottom: -34vmax; background: radial-gradient(closest-side, rgb(var(--m1) / 0.32), rgb(var(--m1) / 0.08) 55%, transparent); animation: nx-drift-a var(--ambient) ease-in-out infinite alternate; }
+.nx-field .b2 { width: 64vmax; height: 64vmax; right: -24vmax; top: -30vmax; background: radial-gradient(closest-side, rgb(var(--m2) / 0.30), rgb(var(--m2) / 0.07) 55%, transparent); animation: nx-drift-b calc(var(--ambient) * 1.25) ease-in-out infinite alternate; }
+.nx-field .b3 { width: 46vmax; height: 46vmax; left: 30%; top: 30%; background: radial-gradient(closest-side, rgb(var(--m3) / 0.13), transparent 70%); animation: nx-drift-c calc(var(--ambient) * 1.6) ease-in-out infinite alternate; }
+.nx-field .cursor { position: absolute; inset: 0; opacity: 0; transition: opacity 1.2s var(--ease);
+  background: radial-gradient(520px circle at var(--cx, 50%) var(--cy, 50%), rgb(var(--m1) / 0.06), transparent 60%); }
+.nx-field.has-cursor .cursor { opacity: 1; }
+.nx-field .grain { position: absolute; inset: -50%; opacity: 0.07; mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 .9 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>"); }
+.nx-field .vignette { position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 40%, transparent 40%, rgb(var(--nx-carbon-0) / 0.65) 100%); }
+:root[data-theme='light'] .nx-field .b1, :root[data-theme='light'] .nx-field .b2 { opacity: 0.45; }
+:root[data-theme='light'] .nx-field .vignette, :root[data-theme='light'] .nx-field .grain { display: none; }
+
+/* Moods: m1 = low-left light, m2 = upper-right light, m3 = haze */
+.nx-field, [data-mood='home'] { --m1: var(--nx-ember); --m2: var(--nx-violet); --m3: var(--nx-signal); }
+[data-mood='discover'] { --m1: var(--nx-magenta); --m2: var(--nx-violet); --m3: var(--nx-ember); }
+[data-mood='classes'] { --m1: var(--nx-ember); --m2: var(--nx-signal); --m3: var(--nx-ember-2); }
+[data-mood='portfolio'] { --m1: var(--nx-violet-2); --m2: 96 110 255; --m3: var(--nx-magenta); }
+[data-mood='focus'] { --m1: var(--nx-ember-3); --m2: var(--nx-violet-3); --m3: var(--nx-carbon-3); }
+[data-mood='world'] { --m1: var(--world, var(--nx-ember)); --m2: var(--nx-violet); --m3: var(--world, var(--nx-ember)); }
+[data-mood='quiet'] { --m1: var(--nx-ember-2); --m2: var(--nx-violet-2); --m3: var(--nx-magenta-3); }
+
+@keyframes nx-drift-a { from { transform: translate3d(0, 0, 0) scale(1); } to { transform: translate3d(8vmax, -6vmax, 0) scale(1.12); } }
+@keyframes nx-drift-b { from { transform: translate3d(0, 0, 0) scale(1.05); } to { transform: translate3d(-9vmax, 7vmax, 0) scale(0.95); } }
+@keyframes nx-drift-c { from { transform: translate3d(-6vmax, 4vmax, 0); } to { transform: translate3d(8vmax, -6vmax, 0); } }
+@keyframes nx-pulse { 0% { box-shadow: 0 0 0 0 rgb(var(--nx-ember) / 0.55); } 70%, 100% { box-shadow: 0 0 0 8px rgb(var(--nx-ember) / 0); } }
+@keyframes nx-enter { from { opacity: 0; transform: translate3d(0, 6px, 0); } to { opacity: 1; transform: none; } }
+@keyframes nx-resolve { from { opacity: 0; filter: blur(6px); } to { opacity: 1; filter: none; } }
+@keyframes nx-ember-sweep { from { transform: translateX(-120%); } to { transform: translateX(120%); } }
+
+.nx-enter { animation: nx-enter var(--t-normal) var(--ease) both; }
+.nx-resolve { animation: nx-resolve 600ms var(--ease) both; }
+
+/* Hero glow — a pool of light behind important content */
+.glow-pool { position: relative; isolation: isolate; }
+.glow-pool::after { content: ''; position: absolute; z-index: -1; pointer-events: none; inset: -20% -10% -30% -10%;
+  background: radial-gradient(ellipse 50% 60% at 18% 60%, rgb(var(--nx-ember) / 0.16), transparent 70%),
+              radial-gradient(ellipse 40% 55% at 85% 20%, rgb(var(--nx-violet) / 0.13), transparent 70%); }
+
+/* Sidebar navigation */
+.nav-item { position: relative; transition: color var(--t-fast) var(--ease), background var(--t-fast) var(--ease); }
+.nav-item:hover { background: rgb(var(--line) / 0.04); }
+.nav-item[aria-current='page'] { color: rgb(var(--ink)); background: linear-gradient(90deg, rgb(var(--nx-ember) / 0.14), rgb(var(--nx-violet) / 0.06) 70%, transparent); }
+.nav-item[aria-current='page']::before { content: ''; position: absolute; left: -12px; top: 22%; bottom: 22%; width: 3px; border-radius: 3px;
+  background: linear-gradient(rgb(255 150 70), rgb(var(--nx-ember)), rgb(var(--nx-magenta)));
+  box-shadow: 0 0 12px rgb(var(--nx-ember) / 0.8); }
+.nav-item[aria-current='page'] svg { color: rgb(var(--nx-ember)); filter: drop-shadow(0 0 6px rgb(var(--nx-ember) / 0.55)); }
+.nav-item.guided { box-shadow: inset 0 0 0 1px rgb(var(--nx-ember) / 0.45), 0 0 22px -4px rgb(var(--nx-ember) / 0.55); }
+
+/* Celebrate: an ember pulse sweeping across a surface (< 2 s) */
+.ember-sweep { position: relative; overflow: hidden; }
+.ember-sweep::after { content: ''; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(100deg, transparent 30%, rgb(var(--nx-ember) / 0.22) 50%, transparent 70%); animation: nx-ember-sweep 1.4s var(--ease) both; }
+
+/* ==========================================================================
+   Living Interface levels (Settings → Living interface) + OS preference.
+   ========================================================================== */
+:root[data-motion='reduced'] .nx-field .blob,
+:root[data-motion='static'] .nx-field .blob { animation: none; }
+:root[data-motion='reduced'] .nx-field .cursor,
+:root[data-motion='static'] .nx-field .cursor { display: none; }
+:root[data-motion='reduced'] .nx-enter { animation-name: nx-fade; }
+:root[data-motion='static'] *, :root[data-motion='static'] *::before, :root[data-motion='static'] *::after { animation: none !important; transition: none !important; }
+:root.nx-paused *, :root.nx-paused *::before, :root.nx-paused *::after { animation-play-state: paused !important; }
+@keyframes nx-fade { from { opacity: 0; } to { opacity: 1; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .nx-field .blob { animation: none !important; }
+  .nx-field .cursor { display: none; }
+  .nx-enter { animation-name: nx-fade !important; }
+  .live-dot { animation: none; }
+  .nx-fox * { animation: none !important; }
+}
+@media (max-width: 767px) {
+  .nx-field .b3, .nx-field .grain { display: none; }
+  .nx-field .blob { animation-duration: 60s; }
+}
+
+@media print {
+  .no-print, .nx-field, .nx-companion { display: none !important; }
+  html, body { background: white; color: black; }
+  .card { background: white; box-shadow: none; border-color: #ccc; }
+}
+
+/* ==========================================================================
+   Nova — companion
+   ========================================================================== */
+.nx-companion { position: fixed; left: 0; z-index: 35; width: var(--fox, 84px); height: var(--fox, 84px);
+  transform: translate3d(var(--fx, 0px), var(--fy, 0px), 0); will-change: transform; }
+.nx-companion.walking { transition: transform var(--walk, 4s) linear; }
+.nx-companion.ducked { --fy: 40%; opacity: 0.8; transition: transform var(--t-normal) var(--ease), opacity var(--t-normal); }
+.nx-companion.ducked:hover, .nx-companion.ducked:focus-within { --fy: 0%; opacity: 1; }
+.nx-companion .fox-btn { position: relative; display: block; width: 100%; height: 100%; padding: 0; border: 0; background: none; cursor: pointer; border-radius: 50%; }
+.nx-companion.walking .fox-btn { pointer-events: none; cursor: default; }
+.nx-companion .fox-btn { touch-action: none; -webkit-user-select: none; user-select: none; }
+.nx-companion .fox-btn::before { content: ''; position: absolute; left: 10%; right: 10%; bottom: 0; height: 40%; border-radius: 50%; pointer-events: none;
+  background: radial-gradient(closest-side, rgb(var(--nx-ember) / 0.28), transparent); opacity: 0.55; transition: opacity var(--t-normal); }
+.nx-companion .fox-btn:hover::before, .nx-companion.celebrate .fox-btn::before { opacity: 1; }
+.nx-companion .flip { transform: scaleX(-1); }
+.nx-companion .pose { position: absolute; inset: 0; transition: opacity var(--t-normal) var(--ease); }
+.nx-companion.celebrate .pose { animation: fx-hop 0.55s var(--ease) 2; }
+
+.nx-fox { width: 100%; height: 100%; overflow: visible; }
+.nx-fox .fx-tail-sit { animation: fx-sway 6.5s ease-in-out infinite; }
+.nx-fox .fx-breathe { transform-box: fill-box; transform-origin: 50% 100%; animation: fx-breathe 4.2s ease-in-out infinite; }
+.pose-lie .fx-breathe { animation-duration: 5.6s; }
+.nx-fox .fx-blink { animation: fx-blink 6s steps(1, end) infinite; }
+.nx-fox .fx-ear { animation: fx-ear 11s ease-in-out infinite; }
+.nx-fox .fx-leg-a { transform-box: fill-box; transform-origin: 50% 0; animation: fx-step 0.7s ease-in-out infinite alternate; }
+.nx-fox .fx-leg-b { transform-box: fill-box; transform-origin: 50% 0; animation: fx-step 0.7s ease-in-out infinite alternate-reverse; }
+.pose-walk .fx-bob { animation: fx-bob 0.35s ease-in-out infinite alternate; }
+.pose-walk .fx-tail-walk { animation: fx-sway 1.4s ease-in-out infinite; }
+.nx-fox .fx-z { animation: fx-z 4s ease-in-out infinite; }
+
+@keyframes fx-sway { 0%, 100% { transform: rotate(0deg); } 50% { transform: rotate(-3.5deg); } }
+@keyframes fx-breathe { 0%, 100% { transform: scaleY(1); } 50% { transform: scaleY(1.018); } }
+@keyframes fx-blink { 0%, 95% { transform: scaleY(1); } 96%, 98% { transform: scaleY(0.12); } }
+@keyframes fx-ear { 0%, 88%, 100% { transform: rotate(0); } 90% { transform: rotate(-9deg); } 92% { transform: rotate(4deg); } 94% { transform: rotate(0); } }
+@keyframes fx-step { from { transform: rotate(16deg); } to { transform: rotate(-16deg); } }
+@keyframes fx-bob { from { transform: translateY(0); } to { transform: translateY(-1.2px); } }
+@keyframes fx-hop { 0%, 100% { transform: translateY(0); } 40% { transform: translateY(-9%); } }
+@keyframes fx-z { 0% { opacity: 0; transform: translate(0, 0); } 30% { opacity: .7; } 100% { opacity: 0; transform: translate(6px, -10px); } }
+
+.nx-menu { position: absolute; right: 0; bottom: calc(100% + 8px); width: 220px; padding: 6px; z-index: 40; }
+.nx-menu a, .nx-menu button { display: flex; width: 100%; align-items: center; gap: 10px; border-radius: 6px; padding: 7px 10px; font-size: 13px; text-align: left; color: rgb(var(--ink)); }
+.nx-menu a:hover, .nx-menu button:hover, .nx-menu a:focus-visible, .nx-menu button:focus-visible { background: rgb(var(--nx-ember) / 0.1); }
+.nx-menu svg { color: rgb(var(--muted)); }
+
+/* ---- Nova: living reactions ------------------------------------------------ */
+.nx-fox .fx-head { transition: transform 280ms var(--ease); }
+.nx-companion.alert .fx-ear { animation: none; transform: rotate(-8deg); transition: transform 200ms; }
+.nx-companion[data-mood='angry'] .fx-ear { animation: none; transform: rotate(18deg); }
+.nx-companion.wag .fx-tail-sit, .nx-companion[data-mood='happy'] .fx-tail-sit, .nx-companion[data-mood='love'] .fx-tail-sit { animation: fx-wag 0.26s ease-in-out infinite alternate; }
+.nx-companion.alert .fx-tail-sit { animation-duration: 1.6s; }
+.nx-companion.sliding { transition: transform 0.65s cubic-bezier(.2, .8, .3, 1); }
+.nx-companion.falling { transition: bottom var(--fall, 400ms) cubic-bezier(.55, 0, 1, .45); }
+.nx-companion.dragging { z-index: 60; }
+.nx-companion.dragging .fox-btn { cursor: grabbing; }
+.nx-companion.gone { opacity: 0; pointer-events: none; transition: opacity .35s; }
+.nx-companion.running .fx-leg-a, .nx-companion.running .fx-leg-b { animation-duration: .22s; }
+.nx-companion.running .fx-tail-walk { animation-duration: .4s; }
+.nx-companion .pose { transform-origin: 50% 70%; }
+.nx-companion.act-hop .pose { animation: fx-hop .55s var(--ease); }
+.nx-companion.act-tumble-r .pose { animation: nx-tumble-r .68s cubic-bezier(.3, .7, .4, 1); }
+.nx-companion.act-tumble-l .pose { animation: nx-tumble-l .68s cubic-bezier(.3, .7, .4, 1); }
+.nx-companion.act-flip .pose { animation: nx-flip .9s cubic-bezier(.4, 0, .3, 1); }
+.nx-companion.act-shake .pose { animation: nx-shake .4s linear; }
+.nx-companion.act-land .pose { transform-origin: 50% 100%; animation: nx-land .4s var(--ease); }
+.nx-companion.act-dangle .pose { transform-origin: 50% 8%; animation: nx-dangle .7s ease-in-out infinite alternate; }
+.nx-companion.act-chomp .fx-head { animation: nx-chomp .2s ease-in-out infinite alternate; }
+.nx-companion.act-pounce .pose { animation: nx-pounce .7s var(--ease); }
+.nx-companion.act-howl .pose { transform-origin: 50% 100%; animation: nx-howl 1.8s ease-in-out; }
+.nx-companion.act-spin .pose { animation: nx-spin 1.2s ease-in-out; }
+
+@keyframes fx-wag { from { transform: rotate(-9deg); } to { transform: rotate(5deg); } }
+@keyframes nx-tumble-r { 0% { transform: rotate(0); } 60% { transform: translateY(-14%) rotate(300deg); } 100% { transform: rotate(360deg); } }
+@keyframes nx-tumble-l { 0% { transform: rotate(0); } 60% { transform: translateY(-14%) rotate(-300deg); } 100% { transform: rotate(-360deg); } }
+@keyframes nx-flip { 0% { transform: none; } 15% { transform: scale(1.08, .88); } 55% { transform: translateY(-62%) rotate(-200deg); } 85% { transform: translateY(0) rotate(-360deg) scale(1.1, .9); } 100% { transform: rotate(-360deg); } }
+@keyframes nx-shake { 0%, 100% { transform: none; } 20%, 60% { transform: translateX(-4%); } 40%, 80% { transform: translateX(4%); } }
+@keyframes nx-land { 0% { transform: scale(1.2, .78); } 55% { transform: scale(.94, 1.07); } 100% { transform: none; } }
+@keyframes nx-dangle { from { transform: rotate(-11deg); } to { transform: rotate(11deg); } }
+@keyframes nx-chomp { from { transform: rotate(10deg); } to { transform: rotate(18deg); } }
+@keyframes nx-pounce { 0% { transform: none; } 30% { transform: scale(1.1, .85); } 60% { transform: translate(-12%, -30%) rotate(-12deg); } 100% { transform: none; } }
+@keyframes nx-howl { 0%, 100% { transform: none; } 20%, 80% { transform: scale(1.03, 1.06); } }
+@keyframes nx-spin { 0%, 100% { transform: scaleX(1); } 20% { transform: scaleX(-1); } 40% { transform: scaleX(1); } 60% { transform: scaleX(-1); } 80% { transform: scaleX(1); } }
+
+.nx-part { position: absolute; left: 58%; top: 2%; pointer-events: none; font-size: 15px; line-height: 1; font-weight: 700;
+  opacity: 0; animation: nx-float 1.5s ease-out forwards; text-shadow: 0 0 10px currentColor; }
+.nx-part-heart { color: #FF6FA8; }
+.nx-part-star { color: #FFD166; font-size: 12px; animation-name: nx-orbit; }
+.nx-part-note { color: rgb(var(--nx-violet)); }
+.nx-part-bang { color: rgb(var(--nx-ember)); font-size: 20px; animation-name: nx-pop; }
+.nx-part-treat { left: 70%; top: -60%; font-size: 18px; text-shadow: none; animation: nx-drop .6s cubic-bezier(.5, 0, 1, .5) forwards; }
+@keyframes nx-float { 0% { opacity: 0; transform: translate(0, 6px) scale(.6); } 15% { opacity: 1; } 100% { opacity: 0; transform: translate(var(--dx), -46px) scale(1.15); } }
+@keyframes nx-orbit { 0% { opacity: 0; transform: rotate(0) translateX(18px) rotate(0); } 15%, 80% { opacity: 1; } 100% { opacity: 0; transform: rotate(540deg) translateX(18px) rotate(-540deg); } }
+@keyframes nx-pop { 0% { opacity: 0; transform: translateY(4px) scale(.4); } 30% { opacity: 1; transform: translateY(-14px) scale(1.2); } 80% { opacity: 1; } 100% { opacity: 0; transform: translateY(-18px); } }
+@keyframes nx-drop { 0% { opacity: 1; transform: translateY(-40px) rotate(-30deg); } 85% { opacity: 1; transform: translateY(46px) rotate(20deg); } 100% { opacity: 0; transform: translateY(50px) scale(.4); } }
+
+.nx-say { position: absolute; right: 8%; bottom: calc(100% + 6px); width: max-content; max-width: min(250px, 70vw); padding: 7px 11px;
+  border-radius: 12px 12px 4px 12px; font-size: 12.5px; line-height: 1.35; text-align: left; color: rgb(var(--ink));
+  background: rgb(var(--panel) / 0.97); border: 1px solid rgb(var(--nx-ember) / 0.35);
+  box-shadow: 0 8px 28px rgb(0 0 0 / 0.35), 0 0 22px rgb(var(--nx-ember) / 0.14); animation: nx-say-in .22s var(--ease); }
+.nx-say.left { right: auto; left: 8%; border-radius: 12px 12px 12px 4px; }
+button.nx-say { cursor: pointer; }
+button.nx-say:hover { border-color: rgb(var(--nx-ember) / 0.7); }
+@keyframes nx-say-in { from { opacity: 0; transform: translateY(6px) scale(.96); } to { opacity: 1; transform: none; } }
+
+.nx-badge { position: absolute; right: 14%; top: 8%; width: 11px; height: 11px; border-radius: 50%; background: rgb(var(--nx-ember));
+  box-shadow: 0 0 0 2px rgb(var(--bg)); animation: nx-pulse 2s infinite; pointer-events: none; }
+
+.nx-ball { position: fixed; left: 0; z-index: 34; width: 16px; height: 16px; border-radius: 50%; pointer-events: none;
+  background: radial-gradient(circle at 35% 35%, #fff 0 12%, #FF7A30 13% 60%, #B8361A 100%); box-shadow: 0 2px 6px rgb(0 0 0 / .4);
+  transform: translate3d(var(--bx), -2px, 0) rotate(calc(var(--bx) * -2deg)); transition: transform var(--bms) cubic-bezier(.2, .7, .3, 1); }
+
+.nx-nova-panel { position: fixed; right: 16px; bottom: var(--panel-b, 110px); z-index: 45; display: flex; flex-direction: column;
+  width: min(380px, calc(100vw - 24px)); max-height: min(580px, calc(100vh - var(--panel-b, 110px) - 70px)); overflow: hidden;
+  border-radius: 14px; animation: nx-say-in .22s var(--ease); background: rgb(var(--panel) / 0.97); backdrop-filter: blur(16px);
+  box-shadow: 0 24px 60px -12px rgb(0 0 0 / .55), 0 0 40px -10px rgb(var(--nx-ember) / .25); }
+.nx-nova-log { position: relative; flex: 1; min-height: 120px; overflow-y: auto; padding: 12px; display: flex; flex-direction: column; gap: 8px; font-size: 13.5px; }
+.nova-bubble { align-self: flex-start; max-width: 94%; padding: 9px 11px; border-radius: 12px 12px 12px 4px; background: rgb(var(--ink) / 0.05); border: 1px solid rgb(var(--ink) / 0.06); }
+.me-bubble { align-self: flex-end; max-width: 85%; padding: 7px 11px; border-radius: 12px 12px 4px 12px; background: rgb(var(--nx-ember) / 0.16); border: 1px solid rgb(var(--nx-ember) / 0.25); }
+.nx-noscroll { scrollbar-width: none; } .nx-noscroll::-webkit-scrollbar { display: none; }
+@media (max-width: 640px) { .nx-nova-panel { right: 8px; left: 8px; width: auto; } }
+
+:root[data-motion='reduced'] .nx-fox *, :root[data-motion='reduced'] .nx-companion .pose { animation: none !important; }
+:root[data-motion='reduced'] .nx-companion, :root[data-motion='reduced'] .nx-ball { transition: none !important; }
+:root[data-motion='static'] .nx-part { animation-duration: .01s; }
+@media (prefers-reduced-motion: reduce) {
+  .nx-fox *, .nx-companion .pose { animation: none !important; }
+  .nx-part { animation: nx-fade 1.2s reverse forwards !important; }
+}
+
+/* ---- 0.9 Raise hand + timers ---- */
+@keyframes nx-hand-wave { 0%, 60%, 100% { transform: rotate(0); } 10%, 30% { transform: rotate(-16deg); } 20%, 40% { transform: rotate(14deg); } }
+.nx-hand-wave { transform-origin: 70% 90%; animation: nx-hand-wave 2.4s ease-in-out infinite; }
+@keyframes nx-bell-ring { 0%, 50%, 100% { transform: rotate(0); } 5%, 15%, 25% { transform: rotate(14deg); } 10%, 20%, 30% { transform: rotate(-14deg); } }
+.nx-bell-ring { transform-origin: 50% 10%; animation: nx-bell-ring 2.2s ease-in-out infinite; }
+@keyframes nx-timer-urgent { 0%, 100% { opacity: 1; } 50% { opacity: 0.55; } }
+.nx-timer-urgent { animation: nx-timer-urgent 1s ease-in-out infinite; }
+@keyframes nx-sheet-in { from { transform: translateY(16px); opacity: 0; } to { transform: none; opacity: 1; } }
+.nx-sheet { animation: nx-sheet-in 220ms cubic-bezier(.2,.8,.2,1); }
+@media (prefers-reduced-motion: reduce) {
+  .nx-hand-wave, .nx-bell-ring, .nx-timer-urgent, .nx-sheet { animation: none; }
+}
+:root[data-motion='static'] .nx-hand-wave, :root[data-motion='static'] .nx-bell-ring, :root[data-motion='static'] .nx-sheet { animation: none; }
+
+/* 1.0.4 — Class carousel slide (direction from --dir: 1 = next, -1 = previous). */
+@keyframes nx-slide-in { from { opacity: 0; transform: translateX(calc(var(--dir, 1) * 28px)); } to { opacity: 1; transform: none; } }
+.nx-slide { animation: nx-slide-in 260ms cubic-bezier(.2,.8,.2,1); }
+@media (prefers-reduced-motion: reduce) { .nx-slide { animation: none; } }
+:root[data-motion='static'] .nx-slide { animation: none; }
+
+/* 1.1 — CV: print exactly one Letter page with nothing else. */
+.cv-print-root { display: none; }
+@page cv { size: 8.5in 11in; margin: 0; }
+@media print {
+  body.cv-page { background: #fff !important; }
+  body.cv-page .cv-print-root { page: cv; }
+  body.cv-page > *:not(.cv-print-root) { display: none !important; }
+  body.cv-page > .cv-print-root { display: block !important; }
+  body.cv-page .cv-print-root .cv-sheet { width: 8.5in !important; height: 11in !important; }
+}
+
+/* ---------------------------------------------------------------- guided tour (1.2) */
+.nx-tour-spot { box-shadow: 0 0 0 200vmax rgb(4 5 9 / 0.66); transition: left .55s cubic-bezier(.2,.8,.2,1), top .55s cubic-bezier(.2,.8,.2,1), width .55s cubic-bezier(.2,.8,.2,1), height .55s cubic-bezier(.2,.8,.2,1); pointer-events: none; }
+.nx-tour-ring { pointer-events: none; box-shadow: 0 0 0 2px var(--g1), 0 0 28px 4px color-mix(in srgb, var(--g1) 55%, transparent), inset 0 0 22px color-mix(in srgb, var(--g2) 25%, transparent);
+  transition: left .55s cubic-bezier(.2,.8,.2,1), top .55s cubic-bezier(.2,.8,.2,1), width .55s cubic-bezier(.2,.8,.2,1), height .55s cubic-bezier(.2,.8,.2,1); animation: nx-tour-pulse 2.2s ease-in-out infinite; }
+@keyframes nx-tour-pulse { 0%,100% { opacity: 1 } 50% { opacity: .55 } }
+.nx-tour-guide { pointer-events: none; will-change: transform; filter: drop-shadow(0 10px 18px rgb(0 0 0 / .45)); }
+.nx-tour-guide > svg, .nx-tour-guide > div { position: relative; width: 100%; height: 100%; }
+.nx-tour-guide:not(.is-flying) { animation: nx-tour-bob 2.6s ease-in-out infinite; }
+@keyframes nx-tour-bob { 0%,100% { translate: 0 0 } 50% { translate: 0 -5px } }
+.nx-tour-halo { position: absolute; inset: -22%; border-radius: 9999px; background: radial-gradient(circle, color-mix(in srgb, var(--g1) 45%, transparent), transparent 65%); opacity: .55; }
+.nx-tour-guide.is-flying .nx-tour-halo { opacity: .95; }
+.nx-tour-trail { width: 12px; height: 12px; margin: -6px 0 0 -6px; border-radius: 9999px; pointer-events: none; animation: nx-tour-trail .75s ease-out forwards; }
+@keyframes nx-tour-trail { from { opacity: .95; transform: scale(1) } to { opacity: 0; transform: scale(.2) translateY(10px) } }
+.nx-tour-card { border-radius: 18px; color: rgb(var(--ink)); background: linear-gradient(180deg, rgb(var(--raise) / .96), rgb(var(--panel) / .97));
+  border: 1px solid color-mix(in srgb, var(--g1) 40%, transparent); box-shadow: 0 24px 60px -12px rgb(0 0 0 / .6), 0 0 0 1px rgb(255 255 255 / .04), 0 0 40px -10px color-mix(in srgb, var(--g1) 45%, transparent);
+  backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px); animation: nx-tour-in .45s cubic-bezier(.2,.8,.2,1); transition: left .5s cubic-bezier(.2,.8,.2,1), top .5s cubic-bezier(.2,.8,.2,1); }
+@keyframes nx-tour-in { from { opacity: 0; transform: translateY(8px) scale(.98) } to { opacity: 1; transform: none } }
+@media (prefers-reduced-motion: reduce) { .nx-tour-spot, .nx-tour-ring, .nx-tour-card { transition: none; animation: none; } .nx-tour-guide { animation: none !important; } }

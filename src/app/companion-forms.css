@@ -1,0 +1,261 @@
+/* ==========================================================================
+   NEXORA 0.7 · Scene Assistants — per-animal life, movement and gestures.
+   The companion logic is shared (Companion.tsx); it sets the same act classes for every form
+   (act-hop, act-flip, act-howl, act-spin, act-chomp, act-pounce, act-land …). Here each animal
+   turns those shared acts into its own gesture, keyed on .nx-companion[data-form=…].
+
+   Gesture map (shared act → per animal)
+   ┌────────┬──────────────┬───────────────┬────────────────┬──────────────────┬──────────────┐
+   │ form   │ hop (greet)  │ flip (trick)  │ howl (call)    │ spin (idle)      │ moves by     │
+   ├────────┼──────────────┼───────────────┼────────────────┼──────────────────┼──────────────┤
+   │ nova   │ hop          │ backflip      │ howl           │ tail chase       │ trot         │
+   │ cora   │ claw wave    │ crab dance    │ claw snaps     │ dig in the sand  │ sideways     │
+   │ lumi   │ little loop  │ loop-the-loop │ lantern flash  │ figure-eight     │ hover        │
+   │ maple  │ wing flap    │ head swivel   │ hoot (puff)    │ curious tilt     │ glide        │
+   │ yuki   │ play bow     │ roll over     │ howl           │ shake off snow   │ bound        │
+   │ aurora │ proud nod    │ circle        │ sky howl       │ look at the sky  │ prowl        │
+   │ rain   │ big hop      │ backflip      │ croak (sac)    │ catch a fly      │ hops         │
+   │ nemo   │ head bob     │ shell spin    │ bubbles        │ hide in shell    │ swim         │
+   │ ash    │ tail-up hop  │ twist leap    │ meow           │ stretch          │ prowl        │
+   │ orbit  │ quick spin   │ barrel roll   │ radar ping     │ scan sweep       │ hover        │
+   │ grid   │ wave         │ robot dance   │ beep           │ tape measure     │ march        │
+   └────────┴──────────────┴───────────────┴────────────────┴──────────────────┴──────────────┘
+   All motion stops under prefers-reduced-motion and the "Still" setting (see the end of the file).
+   ========================================================================== */
+
+/* ---------- shared idle life for the new forms --------------------------------------------- */
+.nx-form .fm-hover { animation: fm-hover 2.8s ease-in-out infinite; }
+.nx-form .fm-core { animation: fm-core 3.2s ease-in-out infinite; }
+.nx-form .fm-antenna { animation: fx-ear 8s ease-in-out infinite; }
+.nx-form .fm-beacon { animation: fm-beacon 2.4s steps(1, end) infinite; }
+.nx-form .fm-thrust { animation: fm-flicker .16s ease-in-out infinite alternate; }
+.nx-form .fm-sac { animation: fm-sac 4s ease-in-out infinite; }
+.form-firefly .fm-lantern { animation: fm-lantern 2.6s ease-in-out infinite; }
+.form-firefly .fm-wing-a { animation: fm-buzz .07s linear infinite alternate; }
+.form-firefly .fm-wing-b { animation: fm-buzz .07s linear infinite alternate-reverse; }
+.form-firefly.pose-lie .fm-lantern { animation-duration: 5s; }
+.form-owl.pose-walk .fm-wing-a, .form-owl.pose-walk .fm-wing-b { animation: fm-flap .5s ease-in-out infinite alternate; }
+.form-turtle .fm-flip-a { animation: fm-paddle 3.4s ease-in-out infinite; }
+.form-turtle .fm-flip-b { animation: fm-paddle 3.4s ease-in-out infinite reverse; }
+.form-turtle.pose-walk .fm-flip-a, .form-turtle.pose-walk .fm-flip-b { animation-duration: .9s; }
+.nx-form .fm-swim { animation: fm-wave 1.6s ease-in-out infinite; }
+.form-crab.pose-walk .fx-leg-a, .form-crab.pose-walk .fx-leg-b { animation-duration: .22s; }
+.form-crab .fm-stalks { animation: fm-stalks 7s ease-in-out infinite; }
+.form-bot.pose-walk .fm-arm { animation-duration: .5s; }
+.form-wolf.pose-walk .fx-leg-a, .form-wolf.pose-walk .fx-leg-b { animation-duration: 1s; }
+.form-cat.pose-walk .fx-leg-a, .form-cat.pose-walk .fx-leg-b { animation-duration: .9s; }
+.form-cat .fm-tail { animation: fm-cattail 5s ease-in-out infinite !important; }
+
+@keyframes fm-hover { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-3px); } }
+@keyframes fm-core { 0%, 100% { opacity: .8; } 50% { opacity: 1; } }
+@keyframes fm-beacon { 0%, 70% { opacity: 1; } 71%, 85% { opacity: .25; } 86%, 100% { opacity: 1; } }
+@keyframes fm-flicker { from { transform: scaleY(.82); opacity: .8; } to { transform: scaleY(1.05); opacity: 1; } }
+@keyframes fm-sac { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.06); } }
+@keyframes fm-lantern { 0%, 100% { opacity: .82; } 50% { opacity: 1; } }
+@keyframes fm-buzz { from { transform: rotate(-8deg) scaleY(1); } to { transform: rotate(8deg) scaleY(.55); } }
+@keyframes fm-flap { from { transform: rotate(12deg); } to { transform: rotate(-22deg); } }
+@keyframes fm-paddle { 0%, 100% { transform: rotate(0); } 50% { transform: rotate(-14deg); } }
+@keyframes fm-wave { 0%, 100% { transform: translateY(0) rotate(0); } 50% { transform: translateY(-3px) rotate(-1.5deg); } }
+@keyframes fm-stalks { 0%, 90%, 100% { transform: rotate(0); } 93% { transform: rotate(-5deg); } 96% { transform: rotate(4deg); } }
+@keyframes fm-cattail { 0%, 100% { transform: rotate(0); } 30% { transform: rotate(-5deg); } 60% { transform: rotate(4deg); } }
+
+/* ---------- getting around: one travel style per animal ------------------------------------ */
+/* .gait sits inside .pose, so travel motion never fights the left/right flip on .pose. */
+.nx-companion .gait { position: absolute; inset: 0; transform-origin: 50% 90%; }
+.nx-companion.walking[data-form='maple'] .fm-glide { animation: fm-arc var(--walk, 1s) ease-in-out both; }
+.nx-companion.walking[data-form='rain'] .gait { animation: fm-hopcycle .5s ease-in-out infinite; }
+.nx-companion.walking[data-form='yuki'] .gait { animation: fm-bound .42s ease-in-out infinite; }
+.nx-companion.walking[data-form='lumi'] .gait,
+.nx-companion.walking[data-form='orbit'] .gait { animation: fm-drift 1.3s ease-in-out infinite; }
+.nx-companion.walking[data-form='cora'] .gait { animation: fm-scuttle .22s ease-in-out infinite alternate; }
+.nx-companion.walking[data-form='aurora'] .gait,
+.nx-companion.walking[data-form='ash'] .gait { animation: fm-prowl 1s ease-in-out infinite; }
+.nx-companion.walking[data-form='grid'] .gait { animation: fm-march .5s ease-in-out infinite alternate; }
+
+@keyframes fm-arc { 0% { transform: translateY(0); } 18%, 82% { transform: translateY(-22px); } 100% { transform: translateY(0); } }
+@keyframes fm-hopcycle { 0%, 100% { transform: translateY(0) scale(1.06, .92); } 45% { transform: translateY(-20%) scale(.94, 1.06); } }
+@keyframes fm-bound { 0%, 100% { transform: translateY(0) rotate(0); } 40% { transform: translateY(-7%) rotate(-3deg); } 70% { transform: translateY(-2%) rotate(2deg); } }
+@keyframes fm-drift { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8%); } }
+@keyframes fm-scuttle { from { transform: translateY(0) rotate(-1.5deg); } to { transform: translateY(-2%) rotate(1.5deg); } }
+@keyframes fm-prowl { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(2%); } }
+@keyframes fm-march { from { transform: rotate(-2deg); } to { transform: rotate(2deg); } }
+
+/* ---------- gestures ---------------------------------------------------------------------- */
+/* CORA · crab */
+[data-form='cora'].act-hop .pose { animation: fm-bounce .5s var(--ease); }
+[data-form='cora'].act-hop .fm-claw { animation: fm-claw-wave .25s ease-in-out 4 alternate; }
+[data-form='cora'].act-flip .pose { animation: fm-sidestep 1.3s ease-in-out; }
+[data-form='cora'].act-flip .fm-claw-l { animation: fm-claw-wave .26s ease-in-out 5 alternate; }
+[data-form='cora'].act-flip .fm-claw-r { animation: fm-claw-wave .26s ease-in-out .13s 5 alternate; }
+[data-form='cora'].act-howl .pose { animation: none; }
+[data-form='cora'].act-howl .fm-claw { animation: fm-claw-raise 1.4s ease-in-out both; }
+[data-form='cora'].act-howl .fm-pincer { animation: fm-snap .14s ease-in-out 9 alternate; }
+[data-form='cora'].act-spin .pose { transform-origin: 50% 100%; animation: fm-dig 1.6s ease-in-out; }
+[data-form='cora'].act-chomp .fx-head, [data-form='cora'].act-chomp .fm-claw { animation: fm-feed .22s ease-in-out infinite alternate; }
+[data-form='cora'].act-pounce .fm-pincer { animation: fm-snap .12s ease-in-out 5 alternate; }
+@keyframes fm-claw-wave { from { transform: rotate(0); } to { transform: rotate(34deg); } }
+@keyframes fm-claw-raise { 0%, 100% { transform: rotate(0); } 15%, 85% { transform: rotate(30deg); } }
+@keyframes fm-snap { from { transform: rotate(0); } to { transform: rotate(-22deg); } }
+@keyframes fm-sidestep { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-12%) rotate(-4deg); } 75% { transform: translateX(12%) rotate(4deg); } }
+@keyframes fm-dig { 0%, 100% { transform: none; } 25%, 75% { transform: translateY(9%) scaleY(.9); } 40% { transform: translateY(9%) rotate(-4deg) scaleY(.9); } 60% { transform: translateY(9%) rotate(4deg) scaleY(.9); } }
+@keyframes fm-feed { from { transform: rotate(0); } to { transform: rotate(-16deg); } }
+@keyframes fm-bounce { 0%, 100% { transform: none; } 40% { transform: translateY(-6%) scale(.97, 1.04); } 70% { transform: scale(1.03, .97); } }
+
+/* LUMI · firefly */
+[data-form='lumi'].act-hop .pose { animation: fm-loop .9s ease-in-out; }
+[data-form='lumi'].act-flip .pose { animation: fm-loop-big 1.2s ease-in-out; }
+[data-form='lumi'].act-howl .pose { animation: fm-drift .5s ease-in-out 3; }
+[data-form='lumi'].act-howl .fm-lantern { animation: fm-flash .3s ease-in-out 5 alternate; }
+[data-form='lumi'].act-spin .pose { animation: fm-eight 1.8s ease-in-out; }
+[data-form='lumi'].act-pounce .pose { animation: fm-dash .7s var(--ease); }
+[data-form='lumi'].act-land .pose, [data-form='orbit'].act-land .pose, [data-form='maple'].act-land .pose { animation: fm-settle .6s var(--ease); }
+@keyframes fm-loop { 0% { transform: none; } 50% { transform: translateY(-34%) rotate(-180deg); } 100% { transform: rotate(-360deg); } }
+@keyframes fm-loop-big { 0% { transform: none; } 25% { transform: translate(-14%, -30%) rotate(-90deg); } 50% { transform: translate(0, -55%) rotate(-180deg); } 75% { transform: translate(14%, -30%) rotate(-270deg); } 100% { transform: rotate(-360deg); } }
+@keyframes fm-flash { from { transform: scale(1); filter: brightness(1); } to { transform: scale(1.22); filter: brightness(1.6); } }
+@keyframes fm-eight { 0%, 100% { transform: translate(0, 0); } 20% { transform: translate(14%, -10%); } 40% { transform: translate(0, -18%); } 60% { transform: translate(-14%, -10%); } 80% { transform: translate(0, -4%); } }
+@keyframes fm-dash { 0% { transform: none; } 40% { transform: translateX(-16%) rotate(-10deg); } 100% { transform: none; } }
+@keyframes fm-settle { 0% { transform: translateY(-14%); } 60% { transform: translateY(3%); } 100% { transform: none; } }
+
+/* MAPLE · owl */
+[data-form='maple'].act-hop .pose { animation: fm-lift .7s var(--ease); }
+[data-form='maple'].act-hop .fm-wing-a, [data-form='maple'].act-hop .fm-wing-b { animation: fm-wingbeat .17s ease-in-out 4 alternate; }
+[data-form='maple'].act-flip .pose { animation: none; }
+[data-form='maple'].act-flip .fm-owl-head { animation: fm-swivel 1.4s ease-in-out; }
+[data-form='maple'].act-howl .pose { animation: none; }
+[data-form='maple'].act-howl .fm-chest { animation: fm-puff .4s ease-in-out 4 alternate; }
+[data-form='maple'].act-howl .fm-owl-head { animation: fm-hoot .4s ease-in-out 4 alternate; }
+[data-form='maple'].act-spin .pose { animation: none; }
+[data-form='maple'].act-spin .fm-owl-head { animation: fm-tilt 1.6s ease-in-out; }
+[data-form='maple'].act-chomp .fm-owl-head { animation: fm-peck .2s ease-in-out infinite alternate; }
+[data-form='maple'].act-pounce .pose { animation: fm-swoop .7s var(--ease); }
+@keyframes fm-lift { 0%, 100% { transform: none; } 45% { transform: translateY(-14%); } }
+@keyframes fm-wingbeat { from { transform: rotate(0); } to { transform: rotate(48deg); } }
+@keyframes fm-swivel { 0%, 100% { transform: scaleX(1); } 20% { transform: scaleX(.15) rotate(-6deg); } 40% { transform: scaleX(-1) rotate(-10deg); } 60% { transform: scaleX(-1) rotate(10deg); } 80% { transform: scaleX(.15) rotate(6deg); } }
+@keyframes fm-puff { from { transform: scale(1); } to { transform: scale(1.08, 1.06); } }
+@keyframes fm-hoot { from { transform: translateY(0); } to { transform: translateY(2px) rotate(-3deg); } }
+@keyframes fm-tilt { 0%, 100% { transform: rotate(0); } 30%, 45% { transform: rotate(-28deg); } 65%, 80% { transform: rotate(22deg); } }
+@keyframes fm-peck { from { transform: translateY(0); } to { transform: translateY(3px) rotate(4deg); } }
+@keyframes fm-swoop { 0% { transform: none; } 35% { transform: translate(-6%, -26%); } 70% { transform: translate(-12%, 2%); } 100% { transform: none; } }
+
+/* YUKI · husky */
+[data-form='yuki'].act-hop .pose { transform-origin: 85% 100%; animation: fm-playbow .8s var(--ease); }
+[data-form='yuki'].act-flip .pose { transform-origin: 50% 60%; animation: fm-roll 1.2s ease-in-out; }
+[data-form='yuki'].act-spin .pose { animation: fm-shakeoff .9s linear; }
+@keyframes fm-playbow { 0%, 100% { transform: none; } 30%, 55% { transform: rotate(10deg) translateY(4%); } 75% { transform: translateY(-8%); } }
+@keyframes fm-roll { 0% { transform: none; } 20% { transform: translateY(14%) rotate(-40deg) scale(.95); } 60% { transform: translateY(14%) rotate(-300deg) scale(.95); } 100% { transform: rotate(-360deg); } }
+@keyframes fm-shakeoff { 0%, 100% { transform: none; } 10%, 30%, 50%, 70% { transform: rotate(-7deg); } 20%, 40%, 60%, 80% { transform: rotate(7deg); } }
+
+/* AURORA · wolf */
+[data-form='aurora'].act-hop .pose { animation: fm-rise .7s var(--ease); }
+[data-form='aurora'].act-hop .fx-head { animation: fm-nod .35s ease-in-out 2 alternate; }
+[data-form='aurora'].act-flip .pose { animation: fm-circle 1.2s ease-in-out; }
+[data-form='aurora'].act-howl .pose { transform-origin: 50% 100%; animation: fm-skyhowl 2.2s ease-in-out; }
+[data-form='aurora'].act-spin .pose { animation: none; }
+[data-form='aurora'].act-spin .fx-head { animation: fm-lookup 2.2s ease-in-out; }
+@keyframes fm-rise { 0%, 100% { transform: none; } 40% { transform: translateY(-4%) scale(1.02); } }
+@keyframes fm-nod { from { transform: rotate(0); } to { transform: rotate(10deg); } }
+@keyframes fm-circle { 0%, 100% { transform: none; } 25% { transform: translateX(-10%) scaleX(-1); } 50% { transform: translateX(-14%) scaleX(-1) translateY(-4%); } 75% { transform: translateX(-6%) scaleX(1); } }
+@keyframes fm-skyhowl { 0%, 100% { transform: none; } 20%, 85% { transform: scale(1.03, 1.09); } }
+@keyframes fm-lookup { 0%, 100% { transform: rotate(0); } 25%, 80% { transform: rotate(-20deg); } }
+
+/* RAIN · frog */
+[data-form='rain'].act-hop .pose { transform-origin: 50% 100%; animation: fm-frog-hop .6s var(--ease); }
+[data-form='rain'].act-howl .pose { animation: none; }
+[data-form='rain'].act-howl .fm-sac { animation: fm-croak .22s ease-in-out 6 alternate; }
+[data-form='rain'].act-spin .pose { animation: none; }
+[data-form='rain'].act-spin .fm-tongue-flick { animation: fm-tongue .5s ease-out .25s; }
+[data-form='rain'].act-pounce .fm-tongue-flick { animation: fm-tongue .4s ease-out; }
+@keyframes fm-frog-hop { 0%, 100% { transform: none; } 15% { transform: scale(1.1, .85); } 50% { transform: translateY(-34%) scale(.92, 1.1); } 85% { transform: scale(1.08, .9); } }
+@keyframes fm-croak { from { transform: scale(1); } to { transform: scale(1.7, 1.55); } }
+@keyframes fm-tongue { 0% { stroke-dashoffset: 100; } 45% { stroke-dashoffset: 0; } 100% { stroke-dashoffset: 100; } }
+
+/* NEMO · turtle */
+[data-form='nemo'].act-hop .pose { animation: none; }
+[data-form='nemo'].act-hop .fm-neck { animation: fm-headbob .22s ease-in-out 4 alternate; }
+[data-form='nemo'].act-flip .pose { animation: fm-shellspin 1.4s ease-in-out; }
+[data-form='nemo'].act-howl .pose { animation: fm-float 1.5s ease-in-out; }
+[data-form='nemo'].act-spin .pose { animation: none; }
+[data-form='nemo'].act-spin .fm-neck { animation: fm-hide 2.2s ease-in-out; }
+[data-form='nemo'].act-pounce .pose { animation: fm-dash .8s var(--ease); }
+@keyframes fm-headbob { from { transform: translateX(0); } to { transform: translateX(4px) rotate(-6deg); } }
+@keyframes fm-shellspin { 0% { transform: none; } 20% { transform: translateY(-12%); } 80% { transform: translateY(-12%) rotate(-360deg); } 100% { transform: rotate(-360deg); } }
+@keyframes fm-float { 0%, 100% { transform: none; } 50% { transform: translateY(-10%); } }
+@keyframes fm-hide { 0%, 100% { transform: none; } 25%, 70% { transform: translateX(-16px) scale(.7); } }
+
+/* ASH · cat */
+[data-form='ash'].act-hop .pose { animation: fm-bounce .55s var(--ease); }
+[data-form='ash'].act-hop .fm-tail { animation: fm-tailup .55s ease-out !important; }
+[data-form='ash'].act-flip .pose { animation: fm-twist 1.1s cubic-bezier(.4, 0, .3, 1); }
+[data-form='ash'].act-howl .pose { transform-origin: 50% 100%; animation: fm-meow .3s ease-in-out 3 alternate; }
+[data-form='ash'].act-spin .pose { transform-origin: 50% 100%; animation: fm-stretch 1.8s ease-in-out; }
+[data-form='ash'].act-pounce .pose { animation: fm-catpounce .8s var(--ease); }
+@keyframes fm-tailup { 0% { transform: rotate(0); } 40% { transform: rotate(-14deg); } 100% { transform: rotate(0); } }
+@keyframes fm-twist { 0% { transform: none; } 20% { transform: scale(1.06, .9); } 55% { transform: translateY(-50%) rotate(180deg) scaleX(-1); } 100% { transform: rotate(360deg); } }
+@keyframes fm-meow { from { transform: none; } to { transform: scale(1.02, 1.05); } }
+@keyframes fm-stretch { 0%, 100% { transform: none; } 30%, 70% { transform: scale(1.14, .86); } }
+@keyframes fm-catpounce { 0% { transform: none; } 25% { transform: translateX(3%) scale(1.05, .9); } 30% { transform: translateX(-3%) scale(1.05, .9); } 35% { transform: translateX(3%) scale(1.05, .9); } 65% { transform: translate(-14%, -26%) rotate(-12deg); } 100% { transform: none; } }
+
+/* ORBIT · drone */
+[data-form='orbit'].act-hop .pose { animation: fm-spin360 .6s ease-in-out; }
+[data-form='orbit'].act-flip .pose { animation: fm-barrel 1s ease-in-out; }
+[data-form='orbit'].act-howl .pose { animation: none; }
+[data-form='orbit'].act-howl .fm-ping { transform-box: fill-box; transform-origin: 50% 50%; animation: fm-ping .5s ease-out 3; }
+[data-form='orbit'].act-spin .pose { animation: none; }
+[data-form='orbit'].act-spin .fm-lens { animation: fm-scan 1.8s ease-in-out; }
+[data-form='orbit'].act-spin .fm-antenna { animation: fm-tilt 1.8s ease-in-out; }
+[data-form='orbit'].act-chomp .fm-beacon, [data-form='grid'].act-chomp .fm-core { animation: fm-charge .25s ease-in-out infinite alternate; }
+[data-form='orbit'].act-pounce .pose { animation: fm-dash .6s var(--ease); }
+@keyframes fm-spin360 { from { transform: rotate(0); } to { transform: rotate(360deg); } }
+@keyframes fm-barrel { 0%, 100% { transform: none; } 25% { transform: translateY(-14%) scaleY(.2); } 50% { transform: translateY(-20%) scaleY(-1); } 75% { transform: translateY(-14%) scaleY(.2); } }
+@keyframes fm-ping { 0% { transform: scale(.6); opacity: .9; } 100% { transform: scale(2); opacity: 0; } }
+@keyframes fm-scan { 0%, 100% { transform: translateX(0); } 25% { transform: translateX(-4px); } 75% { transform: translateX(4px); } }
+@keyframes fm-charge { from { filter: brightness(1); } to { filter: brightness(1.8); } }
+
+/* GRID · bot */
+[data-form='grid'].act-hop .pose { animation: fm-bounce .5s var(--ease); }
+[data-form='grid'].act-hop .fm-arm-l { animation: fm-botwave .24s ease-in-out 4 alternate; }
+[data-form='grid'].act-flip .pose { animation: fm-robo-body .4s ease-in-out 4 alternate; }
+[data-form='grid'].act-flip .fm-arm-l { animation: fm-robo .4s ease-in-out 4 alternate; }
+[data-form='grid'].act-flip .fm-arm-r { animation: fm-robo .4s ease-in-out 4 alternate-reverse; }
+[data-form='grid'].act-howl .pose { animation: fm-jitter .08s linear 12 alternate; }
+[data-form='grid'].act-howl .fm-beacon { animation: fm-beacon-fast .15s steps(1) 8; }
+[data-form='grid'].act-spin .pose { animation: none; }
+[data-form='grid'].act-spin .fm-tape { transform-box: fill-box; transform-origin: 0 50%; animation: fm-tape 2s ease-in-out; }
+@keyframes fm-botwave { from { transform: rotate(120deg); } to { transform: rotate(170deg); } }
+@keyframes fm-robo { from { transform: rotate(0); } to { transform: rotate(150deg); } }
+@keyframes fm-robo-body { from { transform: translateY(0) rotate(-3deg); } to { transform: translateY(-5%) rotate(3deg); } }
+@keyframes fm-jitter { from { transform: translateX(-1px); } to { transform: translateX(1px); } }
+@keyframes fm-beacon-fast { 0% { opacity: 1; filter: brightness(2); } 50% { opacity: .2; } }
+@keyframes fm-tape { 0%, 100% { opacity: 0; transform: scaleX(.1); } 20%, 75% { opacity: 1; transform: scaleX(1); } }
+
+/* ---------- swapping forms (scene change) ------------------------------------------------- */
+.nx-companion.morph .pose { animation: fm-morph .55s var(--ease); }
+@keyframes fm-morph { 0% { transform: scale(.2); opacity: 0; filter: brightness(2.5); } 60% { transform: scale(1.12); opacity: 1; } 100% { transform: none; filter: none; } }
+
+/* ---------- dock glow follows the form ------------------------------------------------------ */
+.nx-companion[data-form] .fox-btn::before { background: radial-gradient(closest-side, var(--form-glow, rgb(var(--nx-ember) / 0.28)), transparent); }
+
+/* ---------- new particles ------------------------------------------------------------------- */
+.nx-part-bubble { color: #9FE6FF; font-size: 13px; }
+.nx-part-spark { color: #FFE45C; animation-name: nx-orbit; }
+.nx-part-snow { color: #E3F4FF; font-size: 12px; }
+.nx-part-leaf { color: #E08A3C; font-size: 13px; }
+.nx-part-ring { color: #E04BFF; font-size: 16px; animation-name: nx-pop; }
+.nx-part-beep { color: #5FB0FF; font: 700 10px/1 var(--font-mono, ui-monospace, monospace); letter-spacing: .04em; }
+
+/* ---------- settings tiles ------------------------------------------------------------------ */
+.nx-forms { display: grid; grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); gap: 8px; }
+.nx-form-tile { position: relative; display: flex; flex-direction: column; align-items: center; gap: 2px; padding: 8px 6px 7px; border-radius: 10px; cursor: pointer;
+  border: 1px solid rgb(255 255 255 / 0.1); background: rgb(255 255 255 / 0.03); color: inherit; text-align: center; }
+.nx-form-tile:hover { background: rgb(255 255 255 / 0.07); }
+.nx-form-tile[aria-pressed='true'] { border-color: var(--tile-glow, #ff7a1a); box-shadow: 0 0 0 2px color-mix(in srgb, var(--tile-glow, #ff7a1a) 35%, transparent), 0 0 24px -6px var(--tile-glow, #ff7a1a); }
+.nx-form-tile .art { width: 64px; height: 64px; }
+.nx-form-tile b { font-size: .8rem; }
+.nx-form-tile small { font-size: .68rem; opacity: .6; line-height: 1.2; }
+.nx-form-tile .tag { position: absolute; top: 5px; right: 6px; font-size: .58rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; opacity: .55; }
+
+/* ---------- reduced motion / Still ----------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  .nx-form *, .nx-companion .pose, .nx-companion .gait { animation: none !important; }
+}
+:root[data-motion='static'] .nx-form *, :root[data-motion='static'] .nx-companion .pose, :root[data-motion='static'] .nx-companion .gait { animation: none !important; }

@@ -1,0 +1,7 @@
+# Secret-scan config. Extends the default gitleaks rules.
+[extend]
+useDefault = true
+
+[allowlist]
+description = "Supabase publishable (anon) key: browser-safe by design; data access is enforced by RLS. Server secrets (service_role, sb_secret_, ANTHROPIC_API_KEY) are NOT allowlisted."
+regexes = ['''sb_publishable_[A-Za-z0-9_-]+''']

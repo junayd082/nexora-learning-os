@@ -1,0 +1,128 @@
+/* NEXORA Keynote — a launch-event stage. Black, huge type, slow light. */
+.kn { position: fixed; inset: 0; background: #000; color: #f5f3ef; overflow: hidden; font-family: 'Manrope Variable', Manrope, system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased; user-select: none; cursor: default; }
+.kn.idle { cursor: none; }
+.kn canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+.kn-orb { position: absolute; border-radius: 9999px; filter: blur(90px); opacity: .0; transition: opacity 2.4s ease, transform 6s ease, background 2.4s ease; pointer-events: none; }
+.kn-stage { position: absolute; inset: 0; display: flex; align-items: safe center; overflow-y: auto; scrollbar-width: none; justify-content: center; padding: 72px max(24px, 6vw) 88px; }
+.kn-scene { width: 100%; }
+
+
+.kn-r { opacity: 0; transform: translateY(18px); filter: blur(6px); transition: opacity .9s cubic-bezier(.22,1,.36,1), transform 1.05s cubic-bezier(.22,1,.36,1), filter .8s cubic-bezier(.22,1,.36,1); will-change: opacity, transform; }
+.kn-r[data-on='1'] { opacity: 1; transform: none; filter: none; }
+.kn-r.fade { transform: none; }
+.kn-r.gone[data-on='1'] { opacity: 0; transform: scale(.96); filter: blur(8px); }
+
+.kn-eyebrow { font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 13px; letter-spacing: .32em; text-transform: uppercase; color: #8b8780; }
+.kn-h1 { font-weight: 700; font-size: clamp(40px, 7.4vw, 128px); line-height: .98; letter-spacing: -.045em; text-wrap: balance; }
+.kn-h2 { font-weight: 650; font-size: clamp(30px, 4.6vw, 76px); line-height: 1.04; letter-spacing: -.035em; text-wrap: balance; }
+.kn-lead { font-weight: 500; font-size: clamp(17px, 1.9vw, 28px); line-height: 1.4; color: #a9a5a0; letter-spacing: -.01em; text-wrap: balance; }
+.kn-grad { background: linear-gradient(92deg, #ff9a3c 0%, #ff7a1a 18%, #e0459c 52%, #8758ff 86%); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.kn-grad-cool { background: linear-gradient(92deg, #7fe7ff, #8758ff 60%, #e0459c); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.kn-dim { color: #5d5a56; }
+
+/* The point of light and the bell ring */
+.kn-point { width: 10px; height: 10px; border-radius: 9999px; background: #fff; box-shadow: 0 0 30px 8px #ffb26b, 0 0 90px 30px #ff7a1a88; animation: kn-breathe 2.6s ease-in-out infinite; }
+@keyframes kn-breathe { 0%,100% { transform: scale(1); opacity: .9 } 50% { transform: scale(1.35); opacity: 1 } }
+.kn-ring { position: absolute; left: 50%; top: 50%; width: 10px; height: 10px; margin: -5px; border-radius: 9999px; border: 1.5px solid #ffb26b; opacity: 0; }
+.kn-ring.on { animation: kn-ring 3.2s cubic-bezier(.16,1,.3,1) infinite; }
+.kn-ring.on.d2 { animation-delay: 1.05s } .kn-ring.on.d3 { animation-delay: 2.1s }
+@keyframes kn-ring { 0% { transform: scale(1); opacity: .9 } 100% { transform: scale(70); opacity: 0 } }
+
+/* Tool chips (chaos) */
+.kn-chip { position: absolute; padding: 10px 16px; border-radius: 12px; border: 1px solid #ffffff1f; background: #ffffff0d; color: #cfcac4; font-size: clamp(14px, 1.45vw, 22px); font-weight: 600; white-space: nowrap;
+  backdrop-filter: blur(6px); transition: transform 1.6s cubic-bezier(.16,1,.3,1), opacity 1.2s ease, left 1.6s cubic-bezier(.7,0,.3,1), top 1.6s cubic-bezier(.7,0,.3,1); }
+.kn-chip.wob { animation: kn-wob 1.1s ease-in-out infinite alternate; }
+@keyframes kn-wob { from { translate: -4px 2px; rotate: -2deg } to { translate: 5px -3px; rotate: 2.5deg } }
+
+/* Logo */
+.kn-logo { display: inline-flex; align-items: center; gap: clamp(14px, 2vw, 28px); }
+.kn-mark { width: clamp(64px, 8vw, 120px); height: clamp(64px, 8vw, 120px); border-radius: 26%; display: grid; place-items: center; position: relative;
+  background: radial-gradient(120% 120% at 20% 0%, #2a1d3d, #0b0b10 60%); box-shadow: 0 0 0 1px #ffffff14, 0 30px 80px -10px #8758ff66, 0 0 120px -20px #ff7a1a88; }
+.kn-word { font-weight: 700; letter-spacing: .42em; font-size: clamp(34px, 6.4vw, 104px); margin-right: -.42em; }
+.kn-word span { display: inline-block; opacity: 0; transform: translateY(.3em); filter: blur(12px); transition: all 1.2s cubic-bezier(.16,1,.3,1); }
+.kn-word[data-on='1'] span { opacity: 1; transform: none; filter: none; }
+.kn-burst { position: absolute; left: 50%; top: 50%; width: 2px; height: 2px; border-radius: 9999px; box-shadow: 0 0 0 0 #fff; pointer-events: none; }
+.kn-burst.on { animation: kn-burst 1.8s cubic-bezier(.16,1,.3,1) forwards; }
+@keyframes kn-burst { 0% { box-shadow: 0 0 0 0 #ffffffcc, 0 0 0 0 #ff7a1a99; } 100% { box-shadow: 0 0 0 70vmax #ffffff00, 0 0 0 110vmax #8758ff00; } }
+
+/* Device-like panels */
+.kn-panel { border-radius: 26px; border: 1px solid #ffffff17; background: linear-gradient(180deg, #16161c, #0c0c10); box-shadow: 0 40px 120px -30px #000, 0 0 0 1px #ffffff08 inset; }
+.kn-glass { border-radius: 20px; border: 1px solid #ffffff14; background: #ffffff08; }
+.kn-pill { display: inline-flex; align-items: center; gap: 8px; border-radius: 9999px; padding: 8px 14px; border: 1px solid #ffffff1a; background: #ffffff0a; font-size: 14px; font-weight: 600; color: #d8d3cc; }
+.kn-bar { height: 6px; border-radius: 9999px; background: #ffffff12; overflow: hidden; }
+.kn-bar > i { display: block; height: 100%; border-radius: 9999px; background: linear-gradient(90deg, #ff7a1a, #e0459c); transition: width 1.6s cubic-bezier(.16,1,.3,1); }
+
+/* Engine document */
+.kn-doc { border-radius: 14px; background: #f6f3ee; color: #1b1a19; padding: 26px 28px; box-shadow: 0 40px 100px -20px #000; font-size: clamp(12.5px, 1.05vw, 16px); line-height: 1.5; }
+.kn-line { position: relative; padding: 3px 6px; border-radius: 5px; transition: background .8s ease, color .8s ease, opacity .8s ease; }
+.kn-line.cut { color: #b8b2aa; }
+.kn-line.cut::after { content: ''; position: absolute; left: 4px; right: 4px; top: 50%; height: 2px; background: #e4364d; transform-origin: left; animation: kn-strike .6s cubic-bezier(.7,0,.3,1) both; }
+@keyframes kn-strike { from { transform: scaleX(0) } to { transform: scaleX(1) } }
+.kn-line.core { background: linear-gradient(90deg, #ffd9b8, #f3d1ff); }
+.kn-verified { display: inline-flex; gap: 6px; align-items: center; color: #5cd49a; font-weight: 700; font-size: 13px; }
+
+/* Loop */
+.kn-loop circle.arc { transition: stroke-dashoffset 2.6s cubic-bezier(.7,0,.3,1); }
+
+/* Numbers */
+.kn-num { font-weight: 750; font-size: clamp(54px, 8vw, 132px); letter-spacing: -.05em; line-height: .9; }
+
+/* Chrome */
+.kn-top, .kn-bottom { position: absolute; left: 0; right: 0; display: flex; align-items: center; justify-content: space-between; padding: 18px max(20px, 3vw); z-index: 5; transition: opacity .6s ease; }
+.kn-top { top: 0 } .kn-bottom { bottom: 0 }
+
+.kn-progress { position: absolute; left: 0; bottom: 0; height: 2px; background: linear-gradient(90deg, #ff7a1a, #e0459c, #8758ff); transition: width .8s cubic-bezier(.16,1,.3,1); z-index: 6; }
+.kn-btn { display: inline-flex; align-items: center; gap: 6px; border-radius: 9999px; padding: 7px 12px; font-size: 12px; font-weight: 600; color: #bdb8b2; border: 1px solid #ffffff1a; background: #ffffff08; }
+.kn-btn:hover { color: #fff; border-color: #ffffff38; }
+.kn-hit { position: absolute; inset: 0; z-index: 2; }
+
+@media (prefers-reduced-motion: reduce) {
+  .kn-scene, .kn-r, .kn-word span, .kn-chip { animation: none !important; transition: opacity .4s ease !important; transform: none !important; filter: none !important; }
+  .kn-ring, .kn-burst { display: none; }
+}
+
+.kn-split { font-size: clamp(38px, 5.4vw, 98px); }
+
+/* Narrator */
+.kn-on { color: #fff; border-color: #ff7a1a99; background: #ff7a1a22; }
+.kn-select { appearance: none; padding-right: 12px; background: #ffffff08; color: #bdb8b2; cursor: pointer; }
+.kn-select option { background: #111; color: #eee; }
+.kn-caption { position: absolute; left: 50%; bottom: 74px; transform: translateX(-50%); z-index: 4; width: min(1100px, 92vw); text-align: center;
+  font-size: clamp(15px, 1.55vw, 24px); line-height: 1.45; font-weight: 500; color: #f5f3ef; text-wrap: balance;
+  padding: 10px 18px; border-radius: 14px; background: #000000b0; box-shadow: 0 0 0 1px #ffffff12; animation: kn-cap .6s ease both; pointer-events: none; }
+@keyframes kn-cap { from { opacity: 0; transform: translate(-50%, 8px) } to { opacity: 1; transform: translate(-50%, 0) } }
+.kn-warn { position: absolute; left: 50%; top: 64px; transform: translateX(-50%); z-index: 7; width: min(720px, 92vw); padding: 12px 16px; border-radius: 14px;
+  background: #3a1d08ee; border: 1px solid #ff7a1a88; color: #ffe2c9; font-size: 14px; line-height: 1.45; text-align: center; }
+
+/* Cinematic transitions: a quick, overlapping crossfade. The old scene lets go at once (fast ease-out),
+   the new one starts almost immediately and settles with a long, soft tail; no frame where both sit
+   at full strength. Only opacity/transform/light blur animate, so it stays smooth on large screens. */
+.kn-layers { display: grid; width: 100%; max-width: 1320px; align-items: center; }
+.kn-layers > * { grid-area: 1 / 1; }
+.kn-in { animation: kn-bloom .95s cubic-bezier(.22,1,.36,1) both; will-change: opacity, transform; }
+.kn-leave { animation: kn-recede .52s cubic-bezier(.4,0,.2,1) both; pointer-events: none; will-change: opacity, transform; }
+@keyframes kn-bloom { from { opacity: 0; transform: scale(1.035) translateY(6px); filter: blur(5px) } 55% { filter: blur(0) } to { opacity: 1; transform: none; filter: none } }
+@keyframes kn-recede { from { opacity: 1; transform: none } 85% { opacity: 0 } to { opacity: 0; transform: scale(.97) translateY(-8px); filter: blur(4px) } }
+.kn-drift { animation: kn-push 26s linear both; transform-origin: 50% 55%; will-change: transform; }
+@keyframes kn-push { from { transform: scale(1) } to { transform: scale(1.03) } }
+.kn-sweep { position: absolute; inset: -20%; z-index: 1; pointer-events: none; mix-blend-mode: screen;
+  background: linear-gradient(105deg, transparent 40%, rgb(255 190 140 / .06) 47%, rgb(200 160 255 / .09) 50%, rgb(255 190 140 / .05) 53%, transparent 60%);
+  animation: kn-sweep 1.3s cubic-bezier(.4,0,.2,1) both; }
+@keyframes kn-sweep { from { transform: translateX(-55%) } to { transform: translateX(55%); opacity: 0 } }
+.kn-orb { transition: opacity 2.2s ease, transform 7s cubic-bezier(.2,.6,.35,1), background 2.2s ease !important; }
+@media (prefers-reduced-motion: reduce) { .kn-in, .kn-leave, .kn-drift, .kn-sweep { animation: none !important; } .kn-leave { display: none; } }
+
+/* Theater mode (Play): the chrome drops away, letterbox bars ease in; any pointer movement brings it back. */
+.kn-top, .kn-bottom { transition: transform .75s cubic-bezier(.22,1,.36,1), opacity .6s ease; }
+.kn-progress { transition: width .8s cubic-bezier(.16,1,.3,1), opacity .6s ease, transform .75s cubic-bezier(.22,1,.36,1); }
+.kn.idle { cursor: none; }
+.kn.idle .kn-top { transform: translateY(-120%); opacity: 0; }
+.kn.idle .kn-bottom { transform: translateY(120%); opacity: 0; pointer-events: none; }
+.kn.idle .kn-progress { opacity: 0; }
+.kn.theater .kn-keys { opacity: 0; transition: opacity .4s ease; }
+.kn-bar-t, .kn-bar-b { position: absolute; left: 0; right: 0; height: 0; background: #000; z-index: 4; pointer-events: none; transition: height 1.1s cubic-bezier(.22,1,.36,1); }
+.kn-bar-t { top: 0; } .kn-bar-b { bottom: 0; }
+.kn.theater .kn-bar-t, .kn.theater .kn-bar-b { height: 5.5vh; }
+.kn-play { color: #fff; border-color: #ff7a1aaa; background: linear-gradient(135deg, #ff7a1a33, #8758ff33); padding: 7px 14px; }
+.kn-caption { z-index: 5; }

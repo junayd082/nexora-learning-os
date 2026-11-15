@@ -1,0 +1,336 @@
+<title>AutoCAD L3 Layers Lecture</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Barlow+Semi+Condensed:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<style>/* Layout: drafting-table system shared with the AutoCAD Floor Plan Lab — vellum ground, dark "sheet index" rail, blueprint grid only in heroes and drawings, AutoCAD-dark model-space panels. */
+:root{
+  --bg:#F3F4F1; --paper:#FFFFFF; --ink:#1B2127; --muted:#56616C; --line:#D3D9DF; --line2:#E6EAEE;
+  --blue:#1E4F8F; --blue-soft:#E4ECF7; --cyan:#0B7F97; --cyan-soft:#DDF1F5;
+  --ok:#2C7A4B; --ok-soft:#E1F2E7; --warn:#A8501C; --warn-soft:#FBEADF; --amber:#A86A1D; --amber-soft:#FBF1E2;
+  --grid:rgba(30,79,143,.10); --side:#1B2127; --side-ink:#E9EDF1; --side-muted:#9AA6B2; --side-hi:#7AAEF5;
+  --ms-bg:#1E252D; --ms-grid:rgba(160,180,200,.10); --ms-grid2:rgba(160,180,200,.2); --ms-ink:#E6EBF0; --ms-muted:#8C99A6;
+  --aci1:#FF4B4B; --aci2:#FFE14D; --aci3:#4BD964; --aci4:#4DD6E8; --aci6:#E35CE6; --aci7:#F2F4F6; --aci8:#8E99A4; --sel:#4C9BFF; --trim:#FF9B3D;
+  --code-bg:#10171E; --code-ink:#D7E0E8; --code-p:#8FA3B5; --code-u:#7FD4E6; --code-c:#B9C99A;
+  --display:"Barlow Semi Condensed","Arial Narrow",Arial,sans-serif;
+  --body:"Barlow","Segoe UI",Arial,sans-serif;
+  --mono:"JetBrains Mono",Consolas,"Courier New",monospace;
+  --r:6px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0E151C; --paper:#151F29; --ink:#E6EBF0; --muted:#9BA8B5; --line:#2A3846; --line2:#202C38;
+  --blue:#7AAEF5; --blue-soft:#1A2B40; --cyan:#4CC3D9; --cyan-soft:#12313A;
+  --ok:#62C48D; --ok-soft:#163324; --warn:#F0A06E; --warn-soft:#3A2416; --amber:#E0A04A; --amber-soft:#33260F;
+  --grid:rgba(122,174,245,.10); --side:#0A1016; --side-ink:#E6EBF0; --side-muted:#8795A3;
+  color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#0E151C; --paper:#151F29; --ink:#E6EBF0; --muted:#9BA8B5; --line:#2A3846; --line2:#202C38;
+  --blue:#7AAEF5; --blue-soft:#1A2B40; --cyan:#4CC3D9; --cyan-soft:#12313A;
+  --ok:#62C48D; --ok-soft:#163324; --warn:#F0A06E; --warn-soft:#3A2416; --amber:#E0A04A; --amber-soft:#33260F;
+  --grid:rgba(122,174,245,.10); --side:#0A1016; --side-ink:#E6EBF0; --side-muted:#8795A3;
+  color-scheme:dark }
+*{box-sizing:border-box}
+html,body{background:var(--bg);color:var(--ink)}
+body{font-family:var(--body);font-size:17px;line-height:1.58;margin:0}
+h1,h2,h3,h4{font-family:var(--display);line-height:1.12;text-wrap:balance;margin:0;font-weight:700}
+h1{font-size:clamp(2rem,4.4vw,3.2rem)} h2{font-size:clamp(1.45rem,2.6vw,2rem)} h3{font-size:1.25rem} h4{font-size:1.05rem;font-weight:600}
+p{margin:0}
+a{color:var(--blue)}
+button{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--cyan);outline-offset:2px;border-radius:3px}
+.eyebrow{font-family:var(--display);font-weight:600;text-transform:uppercase;letter-spacing:.12em;font-size:.8rem;color:var(--muted)}
+.cmd{display:inline-block;font-family:var(--mono);font-weight:700;font-size:.82em;padding:.06em .5em;border-radius:4px;background:var(--blue-soft);color:var(--blue);border:1px solid color-mix(in srgb,var(--blue) 30%,transparent);white-space:nowrap}
+.kbd{display:inline-block;font-family:var(--mono);font-weight:700;font-size:.8em;padding:.05em .45em;border:1px solid var(--line);border-bottom-width:2px;border-radius:4px;background:var(--paper)}
+.muted{color:var(--muted)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 16px;border-radius:6px;border:1px solid var(--line);background:var(--paper);cursor:pointer;text-decoration:none;color:var(--ink);font-weight:700;font-size:.95rem;line-height:1.2}
+.btn:hover{border-color:var(--blue)}
+.btn.primary{background:var(--blue);color:var(--paper);border-color:var(--blue)}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.small{padding:6px 11px;font-size:.85rem}
+.btn[disabled]{opacity:.5;cursor:not-allowed}
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:var(--r);background:var(--paper)}
+table{border-collapse:collapse;width:100%;font-size:.95rem}
+th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+tr:last-child td{border-bottom:0}
+th{font-family:var(--display);font-weight:600;text-transform:uppercase;letter-spacing:.06em;font-size:.78rem;color:var(--muted);background:var(--line2)}
+td{font-variant-numeric:tabular-nums}
+.swatch{display:inline-block;width:12px;height:12px;border-radius:2px;vertical-align:-1px;margin-right:6px;border:1px solid rgba(0,0,0,.25)}
+.note,.tip,.warn{border-radius:6px;padding:14px 16px;border-left:5px solid;display:flex;flex-direction:column;gap:2px}
+.note{background:var(--blue-soft);border-color:var(--blue)}
+.tip{background:var(--ok-soft);border-color:var(--ok)}
+.warn{background:var(--warn-soft);border-color:var(--warn)}
+.note b.lbl,.tip b.lbl,.warn b.lbl{font-family:var(--display);text-transform:uppercase;letter-spacing:.08em;font-size:.82rem}
+.note b.lbl{color:var(--blue)} .tip b.lbl{color:var(--ok)} .warn b.lbl{color:var(--warn)}
+.cmdline{font-family:var(--mono);font-size:.88rem;background:var(--code-bg);color:var(--code-ink);border-radius:6px;padding:14px 16px;display:flex;flex-direction:column;gap:3px;overflow-x:auto}
+.cmdline .p{color:var(--code-p)} .cmdline .u{color:var(--code-u);font-weight:700} .cmdline .c{color:var(--code-c);font-style:italic}
+.cmdline .c::before{content:"// "}
+ol.steps{margin:0;padding-left:1.4em;display:flex;flex-direction:column;gap:6px}
+ul.lst{margin:0;padding-left:1.2em;display:flex;flex-direction:column;gap:6px}
+.fb{font-weight:700} .fb.ok{color:var(--ok)} .fb.no{color:var(--warn)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
+
+/* Lecture: reference-tutorial layout (W3Schools-style) — chapter rail on the left, one reading column, prev/next at top and bottom. */
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:60;background:var(--side)}
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;background:var(--side);color:var(--side-ink);display:flex;align-items:center;gap:14px;padding-block:10px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.top .brand{display:flex;align-items:center;gap:10px;color:inherit;text-decoration:none}
+.top .brand b{font-family:var(--display);font-size:1.15rem;letter-spacing:.02em}
+.top .brand small{display:block;color:var(--side-muted);font-size:.75rem;line-height:1.1}
+.top .menu{display:none;background:rgba(255,255,255,.1);border:0;border-radius:6px;padding:7px 10px;color:var(--side-ink);cursor:pointer}
+.top .crumb{margin-left:auto;font-family:var(--mono);font-size:.78rem;color:var(--side-muted)}
+.layout{display:grid;grid-template-columns:260px minmax(0,1fr)}
+.rail{background:var(--paper);border-right:1px solid var(--line);position:sticky;top:calc(56px + env(safe-area-inset-top,0px));height:calc(100vh - 56px - env(safe-area-inset-top,0px));overflow-y:auto;padding-block:18px 30px}
+.rail h2{font-size:1rem;text-transform:uppercase;letter-spacing:.1em;padding:0 18px 8px;color:var(--muted)}
+.rail a{display:block;padding:7px 18px;color:var(--ink);text-decoration:none;font-size:.95rem;border-left:4px solid transparent}
+.rail a:hover{background:var(--line2)}
+.rail a.cur{background:var(--blue);color:var(--paper);font-weight:700}
+.rail a.sub{padding-left:34px;font-size:.88rem;color:var(--muted)}
+.rail a.sub:hover{color:var(--ink)}
+.rail .n{font-family:var(--mono);font-size:.78rem;opacity:.75;margin-right:6px}
+.rail .grp{margin-top:16px}
+.main{min-width:0;padding-block:26px 90px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.col{max-width:860px;margin:0 auto;display:flex;flex-direction:column;gap:22px}
+.pn{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.pn .btn{background:var(--blue);color:var(--paper);border-color:var(--blue)}
+.pn .btn[aria-disabled="true"]{opacity:.35;pointer-events:none}
+.intro{font-size:1.15rem;color:var(--ink);max-width:68ch}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{display:inline-flex;align-items:center;gap:6px;padding:4px 10px;border-radius:999px;font-size:.8rem;font-weight:700;background:var(--blue-soft);color:var(--blue)}
+.eqbox{border:1.5px solid var(--ink);border-radius:8px;padding:14px 18px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:16px}
+.eqbox ul{margin:6px 0 0;padding-left:1.1em;display:flex;flex-direction:column;gap:3px}
+@media (max-width:700px){.eqbox{grid-template-columns:minmax(0,1fr)}}
+hr.rule{border:0;border-top:1px solid var(--line);margin:6px 0}
+.sec{display:flex;flex-direction:column;gap:14px;scroll-margin-top:80px}
+.sec>h2{display:flex;align-items:baseline;gap:12px}
+.sec>h2 .num{font-family:var(--mono);font-size:.8rem;color:var(--muted);font-weight:500}
+.sec p{max-width:70ch}
+.example{border-radius:8px;background:var(--line2);padding:14px 16px 16px;display:flex;flex-direction:column;gap:10px;border:1px solid var(--line)}
+.example h3{font-size:1.05rem}
+.example .bar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.tryit{display:inline-flex;align-items:center;gap:8px;background:var(--ok);color:var(--paper);border-radius:6px;padding:9px 16px;font-weight:700;text-decoration:none;align-self:flex-start}
+.tryit:hover{filter:brightness(1.1)}
+.exercise{border:2px solid var(--blue);border-radius:8px;padding:18px;display:flex;flex-direction:column;gap:12px;background:var(--paper)}
+.exercise .q{font-size:1.1rem;line-height:1.9}
+.exercise input{font:inherit;font-family:var(--mono);font-weight:700;width:9em;padding:4px 8px;border:2px solid var(--line);border-radius:5px;background:var(--paper);color:var(--ink)}
+.exercise input:focus{outline:none;border-color:var(--blue)}
+.summary{background:var(--side);color:var(--side-ink);border-radius:8px;padding:18px 20px;display:flex;flex-direction:column;gap:8px}
+.summary .eyebrow{color:var(--side-muted)}
+.summary ul{margin:0;padding-left:1.1em;display:flex;flex-direction:column;gap:4px}
+.summary .cmd{background:rgba(122,174,245,.16);color:#BCD6FA;border-color:transparent}
+.wsbox{display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:16px;align-items:center;border:1px solid var(--line);border-radius:8px;padding:16px 18px;background:var(--paper)}
+.wsbox .ico{width:46px;height:56px;border:2px solid var(--blue);border-radius:4px;position:relative;display:grid;place-items:center;font-family:var(--mono);font-size:.7rem;font-weight:700;color:var(--blue)}
+.wsbox .ico::after{content:"";position:absolute;top:-2px;right:-2px;width:14px;height:14px;background:var(--bg);border-left:2px solid var(--blue);border-bottom:2px solid var(--blue)}
+@media (max-width:600px){.wsbox{grid-template-columns:auto minmax(0,1fr)}.wsbox .btn{grid-column:1/-1}}
+.layers td:first-child{font-family:var(--mono);font-weight:700}
+@media (max-width:960px){
+  .layout{grid-template-columns:minmax(0,1fr)}
+  .top .menu{display:inline-flex}
+  .rail{position:fixed;left:0;top:calc(56px + env(safe-area-inset-top,0px));z-index:45;width:min(300px,86vw);transform:translateX(-105%);transition:transform .2s;box-shadow:0 0 0 100vmax transparent;padding-left:env(safe-area-inset-left,0px)}
+  body.nav-open .rail{transform:none;box-shadow:0 0 0 100vmax rgba(0,0,0,.4)}
+  .top .crumb{display:none}
+}
+</style>
+<header class="top"><button class="menu" id="menuBtn" aria-expanded="false" aria-label="Open lesson list">☰ Lessons</button><a class="brand" href="#top"><svg width="34" height="34" viewBox="0 0 34 34" aria-hidden="true"><rect x="1" y="1" width="32" height="32" rx="5" fill="#1E4F8F"/><path d="M1 12H33M1 23H33M12 1V33M23 1V33" stroke="rgba(255,255,255,.18)"/><path d="M23.5 11.5a8 8 0 1 0 0 11" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round"/></svg><span><b>MR. C · AutoCAD</b><small>for Beginners · Lecture</small></span></a><span class="crumb">Lecture 3 of 6 · AutoCAD 2026</span></header>
+<div class="layout"><nav class="rail" aria-label="Lessons"><h2>AutoCAD Tutorial</h2><a href="https://claude.ai/artifact/ADP3LVYhRXwGRbeEFtJg9s" target="_blank" rel="noopener"><span class="n">01</span>Workspace</a><a href="https://claude.ai/artifact/PjRYdvsRM78BTsGwV7WXkS" target="_blank" rel="noopener"><span class="n">02</span>Precise Lines</a><a class="cur" href="#top"><span class="n">03</span>Layers</a><a class="sub" href="#why">What Layers Do</a><a class="sub" href="#manager">The Layer Properties Manager</a><a class="sub" href="#standard">Class Layer Standard</a><a class="sub" href="#controls">Off, Freeze and Lock</a><a class="sub" href="#move">Moving Objects to the Right Layer</a><a class="sub" href="#exercise">Exercise</a><a class="sub" href="#worksheet">Worksheet</a><a href="https://claude.ai/artifact/LQNorE7A4nAGT8BqFSQxtP" target="_blank" rel="noopener"><span class="n">04</span>Walls</a><a href="https://claude.ai/artifact/B7bh4pyM8KFimsTsFiK7R4" target="_blank" rel="noopener"><span class="n">05</span>Doors &amp; Labels</a><a href="https://claude.ai/artifact/DB5chifa9CYrmtLToiWBBG" target="_blank" rel="noopener"><span class="n">06</span>Sheets &amp; Plotting</a><div class="grp"><h2>Practice</h2><a href="https://claude.ai/artifact/7KkzSYChoJYqjPYBhuyYJw" target="_blank" rel="noopener">Lesson 3 website</a><a href="#worksheet">Lesson 3 worksheet</a></div></nav>
+<main class="main" id="top"><div class="col">
+<div class="pn"><a class="btn small" href="https://claude.ai/artifact/PjRYdvsRM78BTsGwV7WXkS" target="_blank" rel="noopener">❮ Previous</a><a class="btn small" href="https://claude.ai/artifact/LQNorE7A4nAGT8BqFSQxtP" target="_blank" rel="noopener">Next ❯</a></div>
+<div><span class="eyebrow">Lesson 3 · Lecture</span><h1>Layers: Organizing the Drawing</h1></div>
+<p class="intro">A floor plan can hold thousands of objects. Layers sort them into categories, like clear plastic sheets stacked on top of each other: one sheet for walls, one for doors, one for dimensions. Control the sheet and you control every object on it.</p>
+<div class="chips"><span class="chip">90-minute block</span><span class="chip">AutoCAD 2026</span><span class="chip">Practice House · 30&#x27;-0&quot; × 24&#x27;-0&quot;</span></div>
+<div class="eqbox"><div><span class="eyebrow">Essential question</span><p style="font-family:var(--display);font-weight:600;font-size:1.2rem;margin-top:4px">How do professionals control thousands of objects at once?</p><p class="muted" style="margin-top:8px;font-size:.95rem">Students will create the seven class layers with correct names, colors and lineweights, set the current layer, and move objects onto the correct layer.</p></div><div><span class="eyebrow">I can…</span><ul><li>I can create layers with a name, color and lineweight.</li><li>I can set a layer current before I draw.</li><li>I can turn layers off, freeze and lock them.</li><li>I can move an object to the correct layer.</li></ul></div></div>
+<hr class="rule">
+<section class="sec" id="why"><h2><span class="num">3.1</span>What Layers Do</h2><ul class="lst"><li><b>Color</b>: makes each category easy to see on screen.</li><li><b>Lineweight</b>: how thick the line prints. Walls print heavier than furniture.</li><li><b>Visibility</b>: hide a whole category to focus on another.</li><li><b>Protection</b>: lock a category so it can&#x27;t be changed by accident.</li></ul><div class="note"><b class="lbl">Note</b><p>Leave each object&#x27;s color, linetype and lineweight set to <b>ByLayer</b>. Then the layer controls them, and one change updates every object.</p></div></section><hr class="rule"><section class="sec" id="manager"><h2><span class="num">3.2</span>The Layer Properties Manager</h2><ol class="steps"><li>Type <span class="cmd">LA</span> and press Enter (or Home tab › Layers panel › Layer Properties).</li><li>Click <b>New Layer</b> and type the name.</li><li>Click the color swatch to choose its color.</li><li>Click the lineweight to choose how thick it prints.</li><li>Double-click a layer (or click Set Current) to make it <b>current</b>. New objects go on the current layer.</li></ol></section><hr class="rule"><section class="sec" id="standard"><h2><span class="num">3.3</span>Class Layer Standard</h2><p>Firms follow the U.S. National CAD Standard. Our seven layers use the same naming idea: <b>A-</b> means architectural.</p><div class="tbl layers"><table><thead><tr><th>Layer</th><th>Holds</th><th>Color</th><th>Lineweight</th></tr></thead><tbody><tr><td>A-WALL</td><td>Exterior and interior walls</td><td><span class="swatch" style="background:var(--aci2)"></span>Yellow (2)</td><td>0.50 mm</td></tr><tr><td>A-DOOR</td><td>Doors and swings</td><td><span class="swatch" style="background:var(--aci4)"></span>Cyan (4)</td><td>0.25 mm</td></tr><tr><td>A-WIND</td><td>Windows</td><td><span class="swatch" style="background:var(--aci3)"></span>Green (3)</td><td>0.25 mm</td></tr><tr><td>A-FURN</td><td>Furniture and fixtures</td><td><span class="swatch" style="background:var(--aci6)"></span>Magenta (6)</td><td>0.18 mm</td></tr><tr><td>A-DIMS</td><td>Dimensions</td><td><span class="swatch" style="background:var(--aci1)"></span>Red (1)</td><td>0.18 mm</td></tr><tr><td>A-TEXT</td><td>Room names and notes</td><td><span class="swatch" style="background:var(--aci7)"></span>White (7)</td><td>0.25 mm</td></tr><tr><td>A-HATCH</td><td>Material and floor patterns</td><td><span class="swatch" style="background:var(--aci8)"></span>Gray (8)</td><td>0.13 mm</td></tr></tbody></table></div><div class="tip"><b class="lbl">Tip</b><p>Two layers are made automatically: <b>0</b> (never draw on it) and <b>Defpoints</b> (created by dimensions; it never prints).</p></div></section><hr class="rule"><section class="sec" id="controls"><h2><span class="num">3.4</span>Off, Freeze and Lock</h2><div class="tbl"><table><thead><tr><th>Control</th><th>Icon</th><th>Objects are…</th></tr></thead><tbody><tr><td>Off</td><td>Light bulb</td><td>Hidden. They still exist and can be selected with some commands.</td></tr><tr><td>Freeze</td><td>Sun / snowflake</td><td>Hidden and ignored by AutoCAD. Faster in big drawings.</td></tr><tr><td>Lock</td><td>Padlock</td><td>Visible but cannot be selected or changed. They appear faded.</td></tr></tbody></table></div><div class="note"><b class="lbl">Note</b><p>You can&#x27;t freeze the current layer. Set another layer current first.</p></div></section><hr class="rule"><section class="sec" id="move"><h2><span class="num">3.5</span>Moving Objects to the Right Layer</h2><ol class="steps"><li>Select the object.</li><li>Open the Layers drop-down on the Home tab.</li><li>Choose the correct layer.</li><li>Press Esc to deselect.</li></ol><div class="example"><div class="bar"><h3>Example: Match Properties copies a layer from one object to others</h3></div><div class="cmdline"><div class="u">Command: MA</div><div class="p">Select source object:</div><div class="c">Click an object that is on the right layer</div><div class="p">Select destination object(s) or [Settings]:</div><div class="c">Click the objects to fix, then press Enter</div></div><a class="tryit" href="https://claude.ai/artifact/7KkzSYChoJYqjPYBhuyYJw#lab" target="_blank" rel="noopener">Try it Yourself »</a></div></section><hr class="rule">
+<section class="exercise" id="exercise" data-answers="[&quot;changed&quot;, &quot;edited&quot;, &quot;selected&quot;, &quot;modified&quot;]" data-show="changed (edited)">
+      <span class="eyebrow">Exercise · Test yourself</span><p>Complete the sentence.</p>
+      <p class="q">A locked layer is visible, but its objects cannot be <input id="exInput" aria-label="Your answer" autocomplete="off" spellcheck="false"> </p>
+      <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn primary small" id="exCheck">Submit Answer »</button><button class="btn small" id="exShow">Show Answer</button></div>
+      <p id="exResult" class="fb" aria-live="polite"></p></section>
+<section class="summary"><span class="eyebrow">Summary</span><h3>What to remember</h3><ul><li>Layers are categories: walls, doors, windows, furniture, dimensions, text, hatch.</li><li>Set the right layer current BEFORE you draw.</li><li>Off hides, Freeze hides and ignores, Lock protects.</li><li>Keep object properties ByLayer.</li></ul></section>
+<section class="wsbox" id="worksheet"><div class="ico">PDF</div>
+      <div><span class="eyebrow">After the lecture</span><h3>Lesson 3 Worksheet</h3><p class="muted">3 pages · fillable PDF · 6 sections. Do it after the lesson website.</p><p class="dlstatus fb" aria-live="polite"></p></div>
+      <button class="btn primary" data-ws="worksheet.pdf" data-name="AutoCAD_L3_Layers_Worksheet.pdf">Download worksheet</button></section>
+<div class="pn"><a class="btn small" href="https://claude.ai/artifact/PjRYdvsRM78BTsGwV7WXkS" target="_blank" rel="noopener">❮ Previous</a><a class="btn small" href="https://claude.ai/artifact/LQNorE7A4nAGT8BqFSQxtP" target="_blank" rel="noopener">Next ❯</a></div>
+</div></main></div>
+<script>/* Shared helpers: storage, architectural length parsing/formatting, practice-house drawing, worksheet download. */
+const $ = (s, el = document) => el.querySelector(s);
+const $$ = (s, el = document) => [...el.querySelectorAll(s)];
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+const store = {
+  get(k, d) { try { const v = localStorage.getItem(k); return v === null ? d : JSON.parse(v); } catch { return d; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} },
+};
+
+/* ── Architectural lengths (inches internally) ─────────────────────── */
+function parseNum(t) {
+  t = t.trim();
+  if (!t) return 0;
+  let m = t.match(/^(\d+(?:\.\d+)?)\s+(\d+)\/(\d+)$/);           // 6 1/2
+  if (m) return +m[1] + (+m[2]) / (+m[3]);
+  m = t.match(/^(\d+)\/(\d+)$/);                                  // 1/2
+  if (m) return (+m[1]) / (+m[2]);
+  m = t.match(/^\d+(?:\.\d+)?$/);
+  if (m) return +t;
+  return NaN;
+}
+/** "30'" "30'-0\"" "8'6" "6\"" "6" "6 1/2\"" -> inches (NaN if invalid). */
+function parseLen(raw) {
+  let s = String(raw).trim().replace(/[’′]/g, "'").replace(/[”″]/g, '"');
+  if (!s) return NaN;
+  let neg = false;
+  if (s[0] === "-") { neg = true; s = s.slice(1).trim(); }
+  let inches;
+  if (s.includes("'")) {
+    const [ft, rest = ""] = s.split("'");
+    const f = parseNum(ft);
+    const r = parseNum(rest.replace(/^\s*-\s*/, "").replace(/"$/, ""));
+    inches = f * 12 + r;
+  } else {
+    inches = parseNum(s.replace(/"$/, ""));
+  }
+  if (!isFinite(inches)) return NaN;
+  return neg ? -inches : inches;
+}
+/** inches -> 30'-0"  /  8'-6 1/2"  /  6" (nearest 1/16) */
+function fmtLen(inches) {
+  const neg = inches < 0; let v = Math.round(Math.abs(inches) * 16) / 16;
+  let ft = Math.floor(v / 12 + 1e-9); let inch = v - ft * 12;
+  let whole = Math.floor(inch + 1e-9); let frac = Math.round((inch - whole) * 16);
+  if (frac === 16) { whole++; frac = 0; } if (whole === 12) { ft++; whole = 0; }
+  let fs = "";
+  if (frac) { let n = frac, d = 16; while (n % 2 === 0) { n /= 2; d /= 2; } fs = (whole ? " " : "") + n + "/" + d; }
+  const inStr = (whole || !fs ? whole : "") + fs + '"';
+  const out = ft ? `${ft}'-${inStr}` : inStr;
+  return (neg ? "-" : "") + out;
+}
+
+/* ── Practice house (30' x 24'), same geometry as the Floor Plan Lab ─ */
+const PLAN = {"w": 30, "h": 24, "walls": [{"r": [0, 0, 30, 0.5], "axis": "x", "open": [[5, 8, "d"], [11, 14, "w"], [23, 25, "w"]], "ext": true}, {"r": [0, 23.5, 30, 24], "axis": "x", "open": [[7, 11, "w"], [22, 26, "w"]], "ext": true}, {"r": [0, 0, 0.5, 24], "axis": "y", "open": [[5, 9, "w"]], "ext": true}, {"r": [29.5, 0, 30, 24], "axis": "y", "open": [[15, 19, "w"]], "ext": true}, {"r": [18, 0.5, 18.3333, 23.5], "axis": "y", "open": [[2, 4.5, "d"], [10.5, 13.1667, "d"]]}, {"r": [0.5, 14, 18, 14.3333], "axis": "x", "open": [[10, 13, "c"]]}, {"r": [18.3333, 9, 29.5, 9.3333], "axis": "x", "open": []}], "doors": [{"h": [5, 0.5], "leaf": [5, 3.5], "end": [8, 0.5], "label": "3'-0\" front door"}, {"h": [18.3333, 2], "leaf": [20.8333, 2], "end": [18.3333, 4.5], "label": "2'-6\" bath door"}, {"h": [18.3333, 13.1667], "leaf": [21, 13.1667], "end": [18.3333, 10.5], "label": "2'-8\" bedroom door"}], "furniture": [{"t": "rect", "r": [9, 9.75, 16, 12.75], "n": "Sofa"}, {"t": "rect", "r": [10.5, 6, 14.5, 8], "n": "Coffee table"}, {"t": "rect", "r": [0.5, 21.5, 17.5, 23.5], "n": "Counter"}, {"t": "circle", "c": [13, 18.5], "rad": 1.75, "n": "Table"}, {"t": "rect", "r": [22, 16.8333, 27, 23.5], "n": "Queen bed"}, {"t": "rect", "r": [27, 0.5, 29.5, 5.5], "n": "Tub"}, {"t": "rect", "r": [24, 0.5, 25.5, 2.8333], "n": "Toilet"}, {"t": "rect", "r": [21, 7.25, 23, 9], "n": "Sink"}], "labels": [{"t": "LIVING ROOM", "p": [4.75, 11.6]}, {"t": "KITCHEN", "p": [5.5, 17.6]}, {"t": "BEDROOM", "p": [25.25, 12.5]}, {"t": "BATH", "p": [22.6, 5.6]}]};
+const LAYER_COLOR = { "A-WALL": "var(--aci2)", "A-DOOR": "var(--aci4)", "A-WIND": "var(--aci3)", "A-FURN": "var(--aci6)", "A-DIMS": "var(--aci1)", "A-TEXT": "var(--aci7)", "A-HATCH": "var(--aci8)" };
+
+/** Returns drawable parts: [{id, layer, label, svg}] with coordinates mapped by T(x,y). */
+function planParts(T, s) {
+  const parts = [];
+  const P = (x, y) => T(x, y).map(v => +v.toFixed(2)).join(",");
+  PLAN.walls.forEach((w, i) => {
+    const [x1, y1, x2, y2] = w.r, ax = w.axis;
+    const lo = ax === "x" ? x1 : y1, hi = ax === "x" ? x2 : y2;
+    const cuts = (w.open || []).map(o => [o[0], o[1]]).sort((a, b) => a[0] - b[0]);
+    let cur = lo, pieces = [];
+    cuts.forEach(([a, b]) => { if (a > cur) pieces.push([cur, a]); cur = Math.max(cur, b); });
+    if (cur < hi) pieces.push([cur, hi]);
+    let g = "";
+    pieces.forEach(([a, b]) => {
+      const r = ax === "x" ? [a, y1, b, y2] : [x1, a, x2, b];
+      const [px1, py1] = T(r[0], r[3]), [px2, py2] = T(r[2], r[1]);
+      g += `<rect x="${px1.toFixed(2)}" y="${py1.toFixed(2)}" width="${(px2 - px1).toFixed(2)}" height="${(py2 - py1).toFixed(2)}"/>`;
+    });
+    parts.push({ id: "wall" + i, layer: "A-WALL", label: w.ext ? "Exterior wall" : "Interior wall", svg: `<g class="fill">${g}</g>` });
+    (w.open || []).forEach((o, j) => {
+      if (o[2] !== "w") return;
+      const [a, b] = o; let d = "";
+      if (ax === "x") { const ym = (y1 + y2) / 2; [y1, ym, y2].forEach(y => d += `M${P(a, y)}L${P(b, y)}`); d += `M${P(a, y1)}L${P(a, y2)}M${P(b, y1)}L${P(b, y2)}`; }
+      else { const xm = (x1 + x2) / 2; [x1, xm, x2].forEach(x => d += `M${P(x, a)}L${P(x, b)}`); d += `M${P(x1, a)}L${P(x2, a)}M${P(x1, b)}L${P(x2, b)}`; }
+      parts.push({ id: `win${i}_${j}`, layer: "A-WIND", label: "Window", svg: `<path d="${d}"/>` });
+    });
+  });
+  PLAN.doors.forEach((dr, i) => {
+    const [hx, hy] = dr.h, [lx, ly] = dr.leaf, [ex, ey] = dr.end;
+    const r = Math.hypot(lx - hx, ly - hy) * s;
+    const cross = (lx - hx) * (ey - hy) - (ly - hy) * (ex - hx); // >0: ccw in plan space -> cw on screen
+    const sweep = cross > 0 ? 0 : 1;
+    parts.push({ id: "door" + i, layer: "A-DOOR", label: dr.label, svg: `<path d="M${P(hx, hy)}L${P(lx, ly)}M${P(lx, ly)}A${r.toFixed(2)} ${r.toFixed(2)} 0 0 ${sweep} ${P(ex, ey)}"/>` });
+  });
+  PLAN.furniture.forEach((f, i) => {
+    let svg;
+    if (f.t === "rect") { const [a, b, c, d] = f.r; const [px1, py1] = T(a, d), [px2, py2] = T(c, b); svg = `<rect x="${px1.toFixed(2)}" y="${py1.toFixed(2)}" width="${(px2 - px1).toFixed(2)}" height="${(py2 - py1).toFixed(2)}" rx="${(0.15 * s).toFixed(2)}"/>`; }
+    else { const [cx, cy] = T(...f.c); svg = `<circle cx="${cx.toFixed(2)}" cy="${cy.toFixed(2)}" r="${(f.rad * s).toFixed(2)}"/>`; }
+    parts.push({ id: "furn" + i, layer: "A-FURN", label: f.n, svg });
+  });
+  PLAN.labels.forEach((l, i) => {
+    const [x, y] = T(...l.p);
+    parts.push({ id: "text" + i, layer: "A-TEXT", label: `Room label “${l.t}”`, svg: `<text x="${x.toFixed(2)}" y="${y.toFixed(2)}" text-anchor="middle" font-size="${(0.75 * s).toFixed(2)}" font-family="var(--mono)" stroke="none">${l.t}</text>` });
+  });
+  // bath floor tile (hatch)
+  let h = ""; for (let x = 19; x < 29.5; x += 1) h += `M${P(x, 0.5)}L${P(x, 9)}`; for (let y = 1.5; y < 9; y += 1) h += `M${P(18.3333, y)}L${P(29.5, y)}`;
+  parts.push({ id: "hatch0", layer: "A-HATCH", label: "Bath floor tile", svg: `<path d="${h}" stroke-width="0.6"/>` });
+  // dimensions
+  const dim = (a, b, off, horiz, txt) => {
+    let d = "", t;
+    if (horiz) { d = `M${P(a, 0)}L${P(a, off - 0.5)}M${P(b, 0)}L${P(b, off - 0.5)}M${P(a, off)}L${P(b, off)}`; const [tx, ty] = T((a + b) / 2, off + 0.35); t = `<text x="${tx.toFixed(2)}" y="${ty.toFixed(2)}" text-anchor="middle" font-size="${(0.62 * s).toFixed(2)}" font-family="var(--mono)" stroke="none">${txt}</text>`; }
+    else { d = `M${P(0, a)}L${P(off + 0.5, a)}M${P(0, b)}L${P(off + 0.5, b)}M${P(off, a)}L${P(off, b)}`; const [tx, ty] = T(off - 0.35, (a + b) / 2); t = `<text x="${tx.toFixed(2)}" y="${ty.toFixed(2)}" text-anchor="middle" font-size="${(0.62 * s).toFixed(2)}" font-family="var(--mono)" stroke="none" transform="rotate(-90 ${tx.toFixed(2)} ${ty.toFixed(2)})">${txt}</text>`; }
+    const tick = (x, y) => { const [px, py] = T(x, y); const k = 0.25 * s; return `M${(px - k).toFixed(2)},${(py + k).toFixed(2)}L${(px + k).toFixed(2)},${(py - k).toFixed(2)}`; };
+    d += horiz ? tick(a, off) + tick(b, off) : tick(off, a) + tick(off, b);
+    return `<path d="${d}"/>${t}`;
+  };
+  parts.push({ id: "dim0", layer: "A-DIMS", label: "Overall dimension 30'-0\"", svg: dim(0, 30, -2, true, "30'-0\"") });
+  parts.push({ id: "dim1", layer: "A-DIMS", label: "Overall dimension 24'-0\"", svg: dim(0, 24, -2, false, "24'-0\"") });
+  return parts;
+}
+
+/** Full plan SVG in model-space colors. opts: {s, pad, dims, only:[layers]} */
+function planSVG(opts = {}) {
+  const s = opts.s || 18, pad = opts.pad ?? 2.6;
+  const W = (30 + pad * 2) * s, H = (24 + pad * 2) * s;
+  const T = (x, y) => [(x + pad) * s, (24 + pad - y) * s];
+  let g = "";
+  planParts(T, s).forEach(p => {
+    if (opts.only && !opts.only.includes(p.layer)) return;
+    if (!opts.dims && p.layer === "A-DIMS") return;
+    const c = LAYER_COLOR[p.layer];
+    const isFill = p.layer === "A-WALL";
+    g += `<g data-layer="${p.layer}" ${isFill ? `fill="${c}" stroke="none"` : `fill="${p.layer === "A-TEXT" || p.layer === "A-DIMS" ? c : "none"}" stroke="${c}" stroke-width="1.4"`}>${p.svg}</g>`;
+  });
+  return `<svg viewBox="0 0 ${W.toFixed(0)} ${H.toFixed(0)}" role="img" aria-label="${esc(opts.label || "Practice house floor plan, 30 feet by 24 feet")}" style="background:var(--ms-bg)">${gridSVG(W, H, s)}${g}</svg>`;
+}
+function gridSVG(W, H, s, minor = 1, major = 5) {
+  let a = "", b = "";
+  for (let x = 0; x <= W / s; x += minor) { const d = `M${(x * s).toFixed(1)},0V${H}`; if (Math.round(x) % major) a += d; else b += d; }
+  for (let y = 0; y <= H / s; y += minor) { const d = `M0,${(y * s).toFixed(1)}H${W}`; if (Math.round(y) % major) a += d; else b += d; }
+  return `<path d="${a}" stroke="var(--ms-grid)" stroke-width="1" fill="none"/><path d="${b}" stroke="var(--ms-grid2)" stroke-width="1" fill="none"/>`;
+}
+
+/* ── Worksheet download through the viewer's downloads capability ─── */
+async function saveWorksheet(btn, file, filename) {
+  const status = btn.parentElement.querySelector(".dlstatus");
+  const say = (t, bad) => { if (status) { status.textContent = t; status.className = "dlstatus fb " + (bad ? "no" : "ok"); } };
+  btn.disabled = true;
+  try {
+    const dl = window.claude?.use ? await window.claude.use("downloads") : null;
+    if (!dl) { say("Downloads aren't available in this view. Ask your teacher for the worksheet on Schoology.", true); return; }
+    const res = await fetch(file);
+    if (!res.ok) throw new Error("missing");
+    const blob = await res.blob();
+    await dl.save({ filename, data: blob });
+    say("Worksheet saved. Open it in a PDF app to type your answers.");
+  } catch (e) {
+    if (e && e.code === "declined") say("Download cancelled.", true);
+    else if (e && e.code === "rate_limited") say("A download prompt is already open. Try again in a moment.", true);
+    else say("The worksheet couldn't be downloaded here. Ask your teacher for it on Schoology.", true);
+  } finally { btn.disabled = false; }
+}
+function inline(t) { return esc(t).replace(/`([^`]+)`/g, '<span class="cmd">$1</span>').replace(/\*\*([^*]+)\*\*/g, "<b>$1</b>"); }
+
+/* Lecture page behavior: mobile chapter rail, exercise check, worksheet download. */
+(function () {
+  const menu = $("#menuBtn");
+  if (menu) menu.addEventListener("click", () => {
+    const open = document.body.classList.toggle("nav-open");
+    menu.setAttribute("aria-expanded", open);
+  });
+  $$(".rail a").forEach(a => a.addEventListener("click", () => document.body.classList.remove("nav-open")));
+  document.addEventListener("keydown", e => { if (e.key === "Escape") document.body.classList.remove("nav-open"); });
+
+  const ex = $("#exercise");
+  if (ex) {
+    const inp = $("#exInput", ex), out = $("#exResult", ex);
+    const answers = JSON.parse(ex.dataset.answers);
+    $("#exCheck", ex).addEventListener("click", () => {
+      const v = inp.value.trim().toLowerCase().replace(/[()]/g, "");
+      if (!v) { out.textContent = "Type an answer first."; out.className = "fb no"; return; }
+      const ok = answers.some(a => v === a || v.replace(/\s+/g, "") === a.replace(/\s+/g, ""));
+      out.textContent = ok ? "Correct! Nice work." : "Not quite. Re-read the section above and try again.";
+      out.className = "fb " + (ok ? "ok" : "no");
+    });
+    inp.addEventListener("keydown", e => { if (e.key === "Enter") $("#exCheck", ex).click(); });
+    $("#exShow", ex).addEventListener("click", () => { out.textContent = "Answer: " + ex.dataset.show; out.className = "fb ok"; });
+  }
+  $$("[data-ws]").forEach(b => b.addEventListener("click", () => saveWorksheet(b, b.dataset.ws, b.dataset.name)));
+})();
+</script>

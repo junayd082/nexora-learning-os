@@ -1,0 +1,162 @@
+/* NEXORA 1.3 · Living scenes, Scene switch, Appearance settings, class-period icons.
+   Import once from globals.css:  @import './scene.css';
+   Uses NEXORA's dark chrome; the scene supplies --nx-scene-accent and --nx-scrim at runtime. */
+
+.nx-scene { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
+
+/* Reading glass: add .nx-glass to card surfaces (or copy these two lines into the card class). */
+.nx-glass {
+  background: rgb(12 14 19 / var(--nx-scrim, 0.6));
+  -webkit-backdrop-filter: blur(16px) saturate(1.25);
+  backdrop-filter: blur(16px) saturate(1.25);
+}
+@media (prefers-reduced-transparency: reduce) { .nx-glass { background: rgb(12 14 19 / 0.94); backdrop-filter: none; } }
+
+.nx-switch { position: relative; }
+.nx-icon-btn { width: 38px; height: 38px; display: grid; place-items: center; border-radius: 9px; border: 1px solid transparent; background: transparent; color: rgb(236 238 242 / 0.7); cursor: pointer; }
+.nx-icon-btn:hover, .nx-icon-btn[aria-expanded="true"] { background: rgb(255 255 255 / 0.07); color: #eceef2; border-color: rgb(255 255 255 / 0.09); }
+.nx-pop { position: absolute; right: 0; top: calc(100% + 8px); z-index: 60; width: min(430px, calc(100vw - 24px)); max-height: calc(100dvh - 90px); overflow: auto; padding: 16px; display: flex; flex-direction: column; gap: 14px; border-radius: 14px; border: 1px solid rgb(255 255 255 / 0.09); background: rgb(14 16 21 / 0.94); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); box-shadow: 0 24px 60px rgb(0 0 0 / 0.55); }
+@media (max-width: 520px) { .nx-pop { position: fixed; left: 12px; right: 12px; top: calc(64px + env(safe-area-inset-top, 0px)); width: auto; } }
+
+.nx-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+.nx-col { display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.nx-lbl { font-weight: 700; font-size: 0.9rem; }
+.nx-hint { font-size: 0.8rem; color: rgb(236 238 242 / 0.5); }
+.nx-num { font-family: var(--font-mono, ui-monospace, Menlo, monospace); font-size: 0.8rem; color: rgb(236 238 242 / 0.5); }
+.nx-eyebrow { font-family: var(--font-mono, ui-monospace, Menlo, monospace); font-size: 0.72rem; letter-spacing: 0.16em; text-transform: uppercase; color: rgb(236 238 242 / 0.6); }
+.nx-link { color: var(--nx-scene-accent, #ff7a1a); font-weight: 700; font-size: 0.86rem; text-decoration: none; }
+.nx-err { color: #ffb36b; font-weight: 600; font-size: 0.85rem; }
+
+.nx-tiles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.nx-tile { position: relative; border: 0; padding: 0; border-radius: 10px; overflow: hidden; cursor: pointer; aspect-ratio: 16 / 10; background: #111; box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.16); }
+.nx-tile-img, .nx-tile-quad { position: absolute; inset: 0; width: 100%; height: 100%; display: block; object-fit: cover; transition: opacity 0.3s; }
+.nx-tile-quad { display: grid; grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; }
+.nx-tile-quad img { position: static; width: 100%; height: 100%; object-fit: cover; }
+.nx-tile-label { position: absolute; left: 0; right: 0; bottom: 0; padding: 16px 8px 6px; font-size: 0.74rem; font-weight: 700; text-align: left; line-height: 1.2; color: #fff; background: linear-gradient(transparent, rgb(0 0 0 / 0.72)); }
+.nx-tile-label small { display: block; font-weight: 500; opacity: 0.8; font-size: 0.7rem; }
+.nx-tile[aria-pressed="true"] { box-shadow: inset 0 0 0 2px var(--nx-scene-accent, #ff7a1a), 0 0 0 3px color-mix(in srgb, var(--nx-scene-accent, #ff7a1a) 30%, transparent); }
+.nx-tile[aria-pressed="true"]::after { content: "✓"; position: absolute; top: 6px; right: 6px; width: 20px; height: 20px; border-radius: 50%; display: grid; place-items: center; font-weight: 800; font-size: 0.72rem; color: #0b0c10; background: var(--nx-scene-accent, #ff7a1a); }
+
+.nx-seg { display: inline-flex; border: 1px solid rgb(255 255 255 / 0.16); border-radius: 9px; overflow: hidden; }
+.nx-seg button { border: 0; background: transparent; padding: 7px 12px; cursor: pointer; font: inherit; font-weight: 600; font-size: 0.84rem; color: rgb(236 238 242 / 0.6); }
+.nx-seg button[aria-pressed="true"] { background: rgb(255 255 255 / 0.12); color: #eceef2; }
+
+.nx-btn { display: inline-flex; align-items: center; gap: 8px; border: 1px solid rgb(255 255 255 / 0.16); background: rgb(255 255 255 / 0.04); color: inherit; border-radius: 9px; padding: 8px 13px; cursor: pointer; font: inherit; font-weight: 600; font-size: 0.88rem; }
+.nx-btn:hover { background: rgb(255 255 255 / 0.09); }
+.nx-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+.nx-btn-primary { background: var(--nx-scene-accent, #ff7a1a); border-color: transparent; color: #0b0c10; }
+
+.nx-settings { display: flex; flex-direction: column; gap: 18px; scroll-margin-top: 90px; }
+.nx-settings h2 { font-size: 1.35rem; font-weight: 800; }
+.nx-set { display: flex; flex-direction: column; gap: 10px; padding-top: 18px; border-top: 1px solid rgb(255 255 255 / 0.09); }
+.nx-settings input[type="range"], .nx-modal input[type="range"] { width: 100%; accent-color: var(--nx-scene-accent, #ff7a1a); }
+.nx-sw { position: relative; width: 42px; height: 24px; border-radius: 99px; border: 0; background: rgb(255 255 255 / 0.16); cursor: pointer; flex: none; transition: background 0.2s; }
+.nx-sw::after { content: ""; position: absolute; top: 3px; left: 3px; width: 18px; height: 18px; border-radius: 50%; background: #fff; transition: transform 0.2s; }
+.nx-sw[aria-checked="true"] { background: var(--nx-scene-accent, #ff7a1a); }
+.nx-sw[aria-checked="true"]::after { transform: translateX(18px); }
+
+.nx-picon { position: relative; display: inline-grid; place-items: center; border: 0; padding: 0; background: none; cursor: pointer; flex: none; color: #fff; }
+.nx-picon-face { position: relative; display: grid; place-items: center; overflow: hidden; border-radius: 25%; box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.14), 0 6px 18px rgb(0 0 0 / 0.35); }
+.nx-picon-face img, .nx-picon-face canvas { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.nx-picon-face svg { position: relative; filter: drop-shadow(0 1px 2px rgb(0 0 0 / 0.35)); }
+.nx-picon-p { position: absolute; left: 5px; bottom: 3px; font-family: var(--font-mono, ui-monospace, Menlo, monospace); font-size: 0.62rem; font-weight: 500; color: #fff; text-shadow: 0 1px 2px rgb(0 0 0 / 0.7); }
+.nx-picon-lg { cursor: default; }
+
+.nx-scrim { position: fixed; inset: 0; z-index: 70; background: rgb(0 0 0 / 0.45); }
+.nx-modal { position: fixed; z-index: 71; left: 50%; top: 50%; transform: translate(-50%, -50%); width: min(560px, calc(100vw - 24px)); max-height: calc(100dvh - 40px); overflow: auto; padding: 20px; display: flex; flex-direction: column; gap: 16px; border-radius: 14px; border: 1px solid rgb(255 255 255 / 0.09); background: rgb(14 16 21 / 0.96); box-shadow: 0 30px 80px rgb(0 0 0 / 0.6); outline: none; }
+.nx-ed-top { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 16px; align-items: center; }
+.nx-ed-top h2 { font-size: 1.25rem; margin-top: 4px; }
+.nx-tabs { display: flex; gap: 4px; border-bottom: 1px solid rgb(255 255 255 / 0.09); overflow-x: auto; }
+.nx-tabs button { border: 0; background: none; padding: 9px 12px; font: inherit; font-weight: 700; font-size: 0.86rem; color: rgb(236 238 242 / 0.6); cursor: pointer; border-bottom: 2px solid transparent; white-space: nowrap; }
+.nx-tabs button[aria-selected="true"] { color: #eceef2; border-color: var(--nx-scene-accent, #ff7a1a); }
+.nx-swatches { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 8px; }
+.nx-swatches button { aspect-ratio: 1; border-radius: 11px; border: 0; cursor: pointer; display: grid; place-items: center; color: #fff; box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.14); }
+.nx-swatches-wide button { aspect-ratio: 2; }
+.nx-swatches button[aria-pressed="true"] { box-shadow: inset 0 0 0 2px #fff, 0 0 0 3px var(--nx-scene-accent, #ff7a1a); }
+@media (max-width: 480px) { .nx-swatches { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+.nx-drop { border: 1.5px dashed rgb(255 255 255 / 0.16); border-radius: 12px; padding: 22px; display: flex; flex-direction: column; align-items: center; gap: 8px; text-align: center; }
+.nx-crop { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 16px; align-items: center; }
+.nx-crop canvas { width: 180px; height: 180px; border-radius: 24px; cursor: grab; touch-action: none; box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.16); }
+@media (max-width: 480px) { .nx-crop { grid-template-columns: minmax(0, 1fr); } .nx-crop canvas { width: 100%; height: auto; aspect-ratio: 1; } }
+.nx-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+
+/* When a living scene is on, NEXORA's own cards become reading glass so text stays readable on bright scenes. */
+:root[data-scene]:not([data-scene="ambient"]) .card {
+  background: rgb(var(--nx-carbon-2) / max(0.62, var(--nx-scrim, 0.72)));
+  -webkit-backdrop-filter: blur(14px) saturate(1.2);
+  backdrop-filter: blur(14px) saturate(1.2);
+}
+:root[data-theme="light"][data-scene]:not([data-scene="ambient"]) .card { background: rgb(255 253 250 / 0.86); }
+@media (prefers-reduced-transparency: reduce) {
+  :root[data-scene]:not([data-scene="ambient"]) .card { background: rgb(var(--nx-carbon-2) / 0.95); backdrop-filter: none; }
+}
+/* A soft veil over the scene so headlines that sit directly on it stay readable. Reading contrast controls it. */
+.nx-scene::after { content: ""; position: absolute; inset: 0; z-index: 3; pointer-events: none; background: rgb(8 9 12 / calc(var(--nx-scrim, 0.6) * 0.5)); }
+
+/* 1.0.3 — Text that sits directly on a living scene (not inside a card) stays readable on bright scenes. */
+:root[data-scene]:not([data-scene="ambient"]) .nx-onscene {
+  color: rgb(var(--ink) / 0.92);
+  text-shadow: 0 1px 2px rgb(0 0 0 / 0.65), 0 0 14px rgb(0 0 0 / 0.45);
+}
+:root[data-scene]:not([data-scene="ambient"]) .nx-onscene.ember-text { color: rgb(var(--nx-ember)); }
+:root[data-theme="light"][data-scene]:not([data-scene="ambient"]) .nx-onscene { text-shadow: 0 1px 2px rgb(255 255 255 / 0.8), 0 0 14px rgb(255 255 255 / 0.6); }
+/* Small glass surfaces (filter chips) on a scene. */
+.nx-glass { background: rgb(var(--panel) / 0.55); }
+:root[data-scene]:not([data-scene="ambient"]) .nx-glass {
+  background: rgb(var(--nx-carbon-2) / max(0.62, var(--nx-scrim, 0.72)));
+  -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px);
+}
+:root[data-theme="light"][data-scene]:not([data-scene="ambient"]) .nx-glass { background: rgb(255 253 250 / 0.86); }
+
+/* ---------------------------------------------------------------------------------------------
+ * 1.2.6 — Legible on every scene, every theme.
+ * Anything that sits directly on a living scene (not on a card, menu, dialog, glass or field) gets
+ * full-strength ink and a soft halo in the opposite tone, so it reads over bright sky and sand
+ * (dark theme) or deep space and night (light theme). Transparent controls on the scene (filter
+ * chips, ghost buttons) get a frosted backing. Text inside surfaces is untouched.
+ * --------------------------------------------------------------------------------------------- */
+:root[data-scene]:not([data-scene="ambient"]) :is(main, footer) {
+  /* Living scenes are dark or mid-toned in both themes, so text on them is always light with a dark halo. */
+  --nx-onscene-ink: 246 244 240;
+  --nx-halo: 0 1px 2px rgb(0 0 0 / 0.8), 0 0 5px rgb(0 0 0 / 0.6), 0 0 22px rgb(0 0 0 / 0.5);
+  --nx-onscene-glass: rgb(var(--nx-carbon-2) / 0.74);
+  text-shadow: var(--nx-halo);
+}
+:root[data-theme="light"][data-scene]:not([data-scene="ambient"]) :is(main, footer) { --nx-onscene-glass: rgb(255 253 250 / 0.88); }
+/* Surfaces bring their own background: no halo inside them. */
+:root[data-scene]:not([data-scene="ambient"]) :is(main, footer) :is(.card, .surface-3, .nx-glass, .nx-tour-card, .nx-nova-panel, .cn-paper, .att-paper, [role="menu"], [role="dialog"], [role="listbox"], [role="tooltip"], input, textarea, select, .btn, pre, code, table) {
+  text-shadow: none;
+}
+/* Quiet text on the scene becomes full-strength ink. */
+:root[data-scene]:not([data-scene="ambient"]) :is(main, footer) :is(.text-muted, .text-ink, .eyebrow, .label, .h2, h1, h2, h3, h4, p, dt, dd, li, small):not(.ember-text, .violet-text, .text-ok, .text-bad, .text-warn, .text-ember, .chip, .kbd, .btn, .btn-ghost, .btn-primary, .input, .nx-glass, .card):not(:is(.card, .surface-3, .nx-glass, [role="menu"], [role="dialog"], [role="listbox"], .nx-tour-card, .nx-nova-panel, .cn-paper, .att-paper, .btn, .chip, .kbd) *) {
+  color: rgb(var(--nx-onscene-ink) / 0.95);
+}
+/* Plain text right on the scene (no class) follows the same ink. */
+:root[data-scene]:not([data-scene="ambient"]) :is(main, footer) { color: rgb(var(--nx-onscene-ink)); }
+:root[data-scene]:not([data-scene="ambient"]) :is(main, footer) :is(.card, .surface-3, .nx-glass, [role="menu"], [role="dialog"], [role="listbox"], .nx-tour-card, .nx-nova-panel, .cn-paper, .att-paper, .chip, .kbd, .input, .textarea, select) { color: rgb(var(--ink)); }
+:root[data-scene]:not([data-scene="ambient"]) :is(main, footer) .text-faint:not(.chip, .kbd, .btn, .btn-ghost, .input, .nx-glass):not(:is(.card, .surface-3, .nx-glass, [role="menu"], [role="dialog"], [role="listbox"], .nx-tour-card, .nx-nova-panel, .cn-paper, .att-paper, .btn) *) {
+  color: rgb(var(--nx-onscene-ink) / 0.8);
+}
+/* Transparent controls sitting on the scene get a frosted backing. */
+:root[data-scene]:not([data-scene="ambient"]) :is(main, footer) :is(.chip, .btn-ghost, .kbd):not(:is(.card, .surface-3, .nx-glass, [role="menu"], [role="dialog"], .nx-tour-card, .nx-nova-panel, .cn-paper, .att-paper) *) {
+  background: var(--nx-onscene-glass);
+  -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+  border-color: rgb(var(--line) / 0.16);
+  color: rgb(var(--ink));
+  text-shadow: none;
+}
+:root[data-scene]:not([data-scene="ambient"]) :is(main, footer) .btn-ghost:not(:is(.card, .surface-3, .nx-glass, [role="menu"], [role="dialog"], .nx-tour-card, .nx-nova-panel, .cn-paper, .att-paper) *):hover { background: rgb(var(--raise) / 0.9); }
+/* Fields and default buttons on a scene: a touch more opaque. */
+:root[data-scene]:not([data-scene="ambient"]) :is(main, footer) :is(.input, .textarea, select.input, .btn:not(.btn-ghost):not(.btn-primary)) {
+  background-color: rgb(var(--raise) / 0.9);
+  -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px);
+}
+:root[data-theme="light"][data-scene]:not([data-scene="ambient"]) :is(main, footer) :is(.input, .textarea, select.input, .btn:not(.btn-ghost):not(.btn-primary)) { background-color: rgb(255 253 250 / 0.92); }
+/* Menus and drop-downs: always solid enough to read, whatever is behind them. */
+:root[data-scene]:not([data-scene="ambient"]) :is(.surface-3, [role="menu"], [role="listbox"]) {
+  background: rgb(var(--raise) / 0.98);
+  -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px);
+}
+:root[data-theme="light"][data-scene]:not([data-scene="ambient"]) :is(.surface-3, [role="menu"], [role="listbox"]) { background: rgb(255 253 250 / 0.98); }
+/* Native <select> lists follow the theme. */
+select option { background-color: rgb(var(--raise)); color: rgb(var(--ink)); }

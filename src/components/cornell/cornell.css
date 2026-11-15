@@ -1,0 +1,73 @@
+/* Cornell notes paper. Paper stays paper in every theme and scene. */
+.cn-paper {
+  --line: 30px;
+  --rule: #b9d0e4;
+  --margin: #e58b8b;
+  --ink: #1c1c21;
+  --heavy: #17171b;
+  position: relative;
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 22px 26px 16px 66px;
+  border-radius: 6px;
+  background: #fffdf7;
+  color: var(--ink);
+  text-shadow: none;
+  box-shadow: 0 1px 0 rgb(0 0 0 / .04), 0 18px 50px -18px rgb(0 0 0 / .55), 0 0 0 1px rgb(0 0 0 / .06);
+}
+.cn-paper::before { content: ''; position: absolute; top: 0; bottom: 0; left: 46px; width: 2px; background: var(--margin); opacity: .85; }
+.cn-paper * { text-shadow: none !important; }
+.cn-paper :is(h1, h2, h3, p, span, label, div, li, small) { color: inherit; }
+
+.cn-top { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 10px; }
+.cn-brand { font-family: 'Caveat', cursive; font-size: 30px; font-weight: 600; line-height: 1; padding: 2px 14px 4px; border-radius: 12px; background: #f6e3a1; color: #1c1c21; display: inline-block; transform: rotate(-1deg); }
+.cn-pageno { font: 600 11px/1 'IBM Plex Mono', ui-monospace, monospace; letter-spacing: .14em; text-transform: uppercase; color: #8a8a94; }
+
+.cn-fields { display: grid; grid-template-columns: 1.6fr 1.3fr .6fr 1fr; gap: 8px 16px; }
+.cn-field { display: flex; flex-direction: column; min-width: 0; }
+.cn-field label { font: 600 10.5px/1.2 'IBM Plex Mono', ui-monospace, monospace; letter-spacing: .1em; text-transform: uppercase; color: #8a8a94; }
+.cn-field input { width: 100%; min-width: 0; border: 0; border-bottom: 1.5px solid #c9c9cf; background: transparent; padding: 3px 1px 4px; font-size: 15px; color: var(--ink); outline: none; }
+.cn-field input:focus { border-bottom-color: #ff7a1a; }
+.cn-topic input { font-size: 22px; font-weight: 700; letter-spacing: -.01em; }
+.cn-eq input { font-style: italic; font-size: 15px; }
+.cn-cont { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; font-size: 15px; font-weight: 700; }
+.cn-cont span { font-weight: 500; font-size: 13px; color: #6f6f78; }
+
+.cn-heavy { height: 3px; margin: 12px -10px 0 -30px; border-radius: 2px; background: var(--heavy);
+  -webkit-mask: linear-gradient(90deg, transparent, #000 2%, #000 98%, transparent); mask: linear-gradient(90deg, transparent, #000 2%, #000 98%, transparent); }
+
+.cn-body { display: grid; grid-template-columns: 30% minmax(0, 1fr); }
+.cn-col { position: relative; min-width: 0; }
+.cn-col + .cn-col { border-left: 3px solid var(--heavy); }
+.cn-label { display: block; height: var(--line); line-height: var(--line); padding: 0 12px; font-family: 'Caveat', cursive; font-size: 22px; font-weight: 600; color: #3a3a42;
+  background-image: linear-gradient(to bottom, transparent calc(var(--line) - 1px), var(--rule) calc(var(--line) - 1px)); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+.cn-ta { display: block; width: 100%; resize: none; border: 0; outline: none; margin: 0; padding: 0 12px; background-color: transparent;
+  background-image: repeating-linear-gradient(to bottom, transparent 0, transparent calc(var(--line) - 1px), var(--rule) calc(var(--line) - 1px), var(--rule) var(--line));
+  background-attachment: local; line-height: var(--line); font-size: 16.5px; color: var(--ink); overflow-y: auto; scrollbar-width: thin; }
+.cn-ta::placeholder { color: #a8a8b2; font-style: italic; }
+.cn-ta:focus { background-color: rgb(255 214 120 / .10); }
+.cn-cues { font-weight: 600; color: #22223a; }
+.cn-hand .cn-ta, .cn-hand .cn-field input { font-family: 'Caveat', cursive; font-size: 23px; }
+.cn-hand .cn-topic input { font-size: 30px; }
+
+.cn-summary-label { margin-top: 0; }
+.cn-foot { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 8px; }
+.cn-full { font-size: 12px; color: #b0571b; }
+
+/* Quiz myself: cover the notes column. */
+.cn-cover { position: absolute; inset: var(--line) 0 0 3px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; padding: 24px; text-align: center;
+  background: repeating-linear-gradient(135deg, #f3efe4 0 12px, #efe9db 12px 24px); color: #4a4a52; font-size: 14px; border-radius: 0 0 4px 0; }
+.cn-cover button { border-radius: 9999px; padding: 8px 16px; font-weight: 600; font-size: 14px; background: #1c1c21; color: #fff; }
+
+@media (max-width: 640px) {
+  .cn-paper { --line: 28px; padding: 16px 12px 12px 34px; }
+  .cn-paper::before { left: 24px; }
+  .cn-fields { grid-template-columns: 1fr 1fr; }
+  .cn-heavy { margin-left: -14px; margin-right: -4px; }
+  .cn-body { grid-template-columns: 34% minmax(0, 1fr); }
+  .cn-ta { font-size: 15px; padding: 0 7px; }
+  .cn-label { font-size: 18px; padding: 0 7px; }
+  .cn-brand { font-size: 24px; }
+}

@@ -1,0 +1,1032 @@
+<title>AutoCAD L4 Walls</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Barlow+Semi+Condensed:wght@500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<style>/* Layout: drafting-table system shared with the AutoCAD Floor Plan Lab — vellum ground, dark "sheet index" rail, blueprint grid only in heroes and drawings, AutoCAD-dark model-space panels. */
+:root{
+  --bg:#F3F4F1; --paper:#FFFFFF; --ink:#1B2127; --muted:#56616C; --line:#D3D9DF; --line2:#E6EAEE;
+  --blue:#1E4F8F; --blue-soft:#E4ECF7; --cyan:#0B7F97; --cyan-soft:#DDF1F5;
+  --ok:#2C7A4B; --ok-soft:#E1F2E7; --warn:#A8501C; --warn-soft:#FBEADF; --amber:#A86A1D; --amber-soft:#FBF1E2;
+  --grid:rgba(30,79,143,.10); --side:#1B2127; --side-ink:#E9EDF1; --side-muted:#9AA6B2; --side-hi:#7AAEF5;
+  --ms-bg:#1E252D; --ms-grid:rgba(160,180,200,.10); --ms-grid2:rgba(160,180,200,.2); --ms-ink:#E6EBF0; --ms-muted:#8C99A6;
+  --aci1:#FF4B4B; --aci2:#FFE14D; --aci3:#4BD964; --aci4:#4DD6E8; --aci6:#E35CE6; --aci7:#F2F4F6; --aci8:#8E99A4; --sel:#4C9BFF; --trim:#FF9B3D;
+  --code-bg:#10171E; --code-ink:#D7E0E8; --code-p:#8FA3B5; --code-u:#7FD4E6; --code-c:#B9C99A;
+  --display:"Barlow Semi Condensed","Arial Narrow",Arial,sans-serif;
+  --body:"Barlow","Segoe UI",Arial,sans-serif;
+  --mono:"JetBrains Mono",Consolas,"Courier New",monospace;
+  --r:6px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0E151C; --paper:#151F29; --ink:#E6EBF0; --muted:#9BA8B5; --line:#2A3846; --line2:#202C38;
+  --blue:#7AAEF5; --blue-soft:#1A2B40; --cyan:#4CC3D9; --cyan-soft:#12313A;
+  --ok:#62C48D; --ok-soft:#163324; --warn:#F0A06E; --warn-soft:#3A2416; --amber:#E0A04A; --amber-soft:#33260F;
+  --grid:rgba(122,174,245,.10); --side:#0A1016; --side-ink:#E6EBF0; --side-muted:#8795A3;
+  color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#0E151C; --paper:#151F29; --ink:#E6EBF0; --muted:#9BA8B5; --line:#2A3846; --line2:#202C38;
+  --blue:#7AAEF5; --blue-soft:#1A2B40; --cyan:#4CC3D9; --cyan-soft:#12313A;
+  --ok:#62C48D; --ok-soft:#163324; --warn:#F0A06E; --warn-soft:#3A2416; --amber:#E0A04A; --amber-soft:#33260F;
+  --grid:rgba(122,174,245,.10); --side:#0A1016; --side-ink:#E6EBF0; --side-muted:#8795A3;
+  color-scheme:dark }
+*{box-sizing:border-box}
+html,body{background:var(--bg);color:var(--ink)}
+body{font-family:var(--body);font-size:17px;line-height:1.58;margin:0}
+h1,h2,h3,h4{font-family:var(--display);line-height:1.12;text-wrap:balance;margin:0;font-weight:700}
+h1{font-size:clamp(2rem,4.4vw,3.2rem)} h2{font-size:clamp(1.45rem,2.6vw,2rem)} h3{font-size:1.25rem} h4{font-size:1.05rem;font-weight:600}
+p{margin:0}
+a{color:var(--blue)}
+button{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--cyan);outline-offset:2px;border-radius:3px}
+.eyebrow{font-family:var(--display);font-weight:600;text-transform:uppercase;letter-spacing:.12em;font-size:.8rem;color:var(--muted)}
+.cmd{display:inline-block;font-family:var(--mono);font-weight:700;font-size:.82em;padding:.06em .5em;border-radius:4px;background:var(--blue-soft);color:var(--blue);border:1px solid color-mix(in srgb,var(--blue) 30%,transparent);white-space:nowrap}
+.kbd{display:inline-block;font-family:var(--mono);font-weight:700;font-size:.8em;padding:.05em .45em;border:1px solid var(--line);border-bottom-width:2px;border-radius:4px;background:var(--paper)}
+.muted{color:var(--muted)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 16px;border-radius:6px;border:1px solid var(--line);background:var(--paper);cursor:pointer;text-decoration:none;color:var(--ink);font-weight:700;font-size:.95rem;line-height:1.2}
+.btn:hover{border-color:var(--blue)}
+.btn.primary{background:var(--blue);color:var(--paper);border-color:var(--blue)}
+.btn.primary:hover{filter:brightness(1.08)}
+.btn.small{padding:6px 11px;font-size:.85rem}
+.btn[disabled]{opacity:.5;cursor:not-allowed}
+.tbl{overflow-x:auto;border:1px solid var(--line);border-radius:var(--r);background:var(--paper)}
+table{border-collapse:collapse;width:100%;font-size:.95rem}
+th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+tr:last-child td{border-bottom:0}
+th{font-family:var(--display);font-weight:600;text-transform:uppercase;letter-spacing:.06em;font-size:.78rem;color:var(--muted);background:var(--line2)}
+td{font-variant-numeric:tabular-nums}
+.swatch{display:inline-block;width:12px;height:12px;border-radius:2px;vertical-align:-1px;margin-right:6px;border:1px solid rgba(0,0,0,.25)}
+.note,.tip,.warn{border-radius:6px;padding:14px 16px;border-left:5px solid;display:flex;flex-direction:column;gap:2px}
+.note{background:var(--blue-soft);border-color:var(--blue)}
+.tip{background:var(--ok-soft);border-color:var(--ok)}
+.warn{background:var(--warn-soft);border-color:var(--warn)}
+.note b.lbl,.tip b.lbl,.warn b.lbl{font-family:var(--display);text-transform:uppercase;letter-spacing:.08em;font-size:.82rem}
+.note b.lbl{color:var(--blue)} .tip b.lbl{color:var(--ok)} .warn b.lbl{color:var(--warn)}
+.cmdline{font-family:var(--mono);font-size:.88rem;background:var(--code-bg);color:var(--code-ink);border-radius:6px;padding:14px 16px;display:flex;flex-direction:column;gap:3px;overflow-x:auto}
+.cmdline .p{color:var(--code-p)} .cmdline .u{color:var(--code-u);font-weight:700} .cmdline .c{color:var(--code-c);font-style:italic}
+.cmdline .c::before{content:"// "}
+ol.steps{margin:0;padding-left:1.4em;display:flex;flex-direction:column;gap:6px}
+ul.lst{margin:0;padding-left:1.2em;display:flex;flex-direction:column;gap:6px}
+.fb{font-weight:700} .fb.ok{color:var(--ok)} .fb.no{color:var(--warn)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
+
+/* Lesson site: Mr. C's regular lesson format — top bar with Teacher mode + Present, blueprint hero, numbered sections, lab, steps, quick check, worksheet, rubric. */
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:60;background:var(--side)}
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;background:var(--side);color:var(--side-ink);padding-block:10px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.bar .in{max-width:1180px;margin:0 auto;display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.bar .brand{display:flex;align-items:center;gap:10px;color:inherit;text-decoration:none;min-width:0}
+.bar .brand b{font-family:var(--display);font-size:1.12rem;letter-spacing:.02em;display:block;line-height:1.05}
+.bar .brand small{color:var(--side-muted);font-size:.76rem}
+.bar .acts{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}
+.bar .acts .btn{background:rgba(255,255,255,.08);color:var(--side-ink);border-color:rgba(255,255,255,.14)}
+.bar .acts .btn:hover{border-color:var(--side-hi)}
+.bar .acts .btn[aria-pressed="true"]{background:#E0A04A;color:#1B2127;border-color:#E0A04A}
+.wrap{max-width:1180px;margin:0 auto;display:flex;flex-direction:column;gap:40px;padding-block:28px 100px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+.hero{border-radius:10px;overflow:hidden;background:var(--paper);border:1px solid var(--line);
+  background-image:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px),linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:100px 100px,100px 100px,20px 20px,20px 20px}
+.hero .in{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:28px;padding:34px;align-items:center}
+.hero h1{text-transform:uppercase;letter-spacing:.01em}
+.hero .lede{font-size:1.18rem;max-width:44ch;margin-top:12px}
+.hero .eq{margin-top:16px;border-left:4px solid var(--blue);padding:4px 0 4px 14px;font-family:var(--display);font-weight:600;font-size:1.2rem}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:22px}
+.stats div{background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:10px 12px;display:flex;flex-direction:column}
+.stats b{font-family:var(--mono);font-size:1.25rem;color:var(--blue)}
+.stats span{font-size:.82rem;color:var(--muted)}
+.hero-plan{min-width:0}
+.hero-plan svg{display:block;width:100%;height:auto;border-radius:6px}
+@media (max-width:860px){.hero .in{grid-template-columns:minmax(0,1fr);padding:22px}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.path{display:flex;gap:6px;flex-wrap:wrap}
+.path a,.path span{flex:1 1 140px;min-width:0;border:1px solid var(--line);background:var(--paper);border-radius:6px;padding:8px 10px;text-decoration:none;color:var(--ink);font-size:.86rem;line-height:1.25;display:flex;gap:8px;align-items:center}
+.path .n{font-family:var(--mono);font-weight:700;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;flex:none;border:2px solid var(--muted);color:var(--muted);font-size:.75rem}
+.path .cur{border-color:var(--blue);background:var(--blue-soft);font-weight:700}
+.path .cur .n{border-color:var(--blue);background:var(--blue);color:var(--paper)}
+.sect{display:flex;flex-direction:column;gap:16px;scroll-margin-top:80px}
+.sh{display:flex;align-items:baseline;gap:14px;border-bottom:2px solid var(--ink);padding-bottom:8px}
+.sh .no{font-family:var(--mono);font-weight:700;font-size:1rem;color:var(--blue)}
+.sh h2{text-transform:uppercase;letter-spacing:.02em}
+.q4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.q4 .c{border-top:4px solid var(--ink);background:var(--paper);padding:14px 16px;border-radius:0 0 6px 6px;border-left:1px solid var(--line);border-right:1px solid var(--line);border-bottom:1px solid var(--line);display:flex;flex-direction:column;gap:6px}
+.q4 .c:nth-child(2){border-top-color:var(--warn)} .q4 .c:nth-child(3){border-top-color:var(--blue)} .q4 .c:nth-child(4){border-top-color:var(--ok)}
+@media (max-width:900px){.q4{grid-template-columns:repeat(2,minmax(0,1fr))}} @media (max-width:520px){.q4{grid-template-columns:minmax(0,1fr)}}
+.ican{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px}
+.ican div{border:1px solid var(--line);background:var(--paper);border-radius:6px;padding:10px 14px;display:flex;gap:10px}
+.ican div::before{content:"✓";font-weight:700;color:var(--ok)}
+.vocab{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px}
+.vcard{border:1px solid var(--line);background:var(--paper);border-radius:6px;padding:14px 16px;display:flex;flex-direction:column;gap:4px;cursor:pointer;text-align:left;min-height:96px}
+.vcard b{font-family:var(--display);font-size:1.15rem;text-transform:uppercase;letter-spacing:.03em}
+.vcard span{color:var(--muted);font-size:.95rem}
+.vcard[aria-pressed="false"] span{filter:blur(5px);user-select:none}
+.vcard[aria-pressed="false"]::after{content:"Tap to reveal";font-size:.75rem;color:var(--blue);font-weight:700;margin-top:auto}
+.lab{border:1px solid var(--line);border-radius:8px;background:var(--paper);overflow:hidden}
+.lab .lh{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;padding:12px 16px;border-bottom:1px solid var(--line);background:var(--line2)}
+.lab .lh h3{text-transform:uppercase;letter-spacing:.05em;font-size:1.05rem}
+.lab .lb{padding:16px;display:flex;flex-direction:column;gap:14px}
+.seg{display:inline-flex;border:1px solid var(--line);border-radius:6px;overflow:hidden;flex-wrap:wrap}
+.seg button{border:0;background:var(--paper);padding:7px 12px;cursor:pointer;font-weight:700;font-size:.88rem;border-right:1px solid var(--line)}
+.seg button:last-child{border-right:0}
+.seg button[aria-pressed="true"]{background:var(--blue);color:var(--paper)}
+.ms{background:var(--ms-bg);border-radius:6px;overflow:hidden;position:relative}
+.ms svg{display:block;width:100%;height:auto}
+.two{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:16px;align-items:start}
+@media (max-width:860px){.two{grid-template-columns:minmax(0,1fr)}}
+.info{border:1px solid var(--line);border-radius:6px;padding:14px 16px;display:flex;flex-direction:column;gap:8px;background:var(--paper)}
+.notice{padding:11px 14px;border-radius:6px;background:var(--ok-soft);border-left:5px solid var(--ok);font-weight:700}
+.notice.bad{background:var(--warn-soft);border-left-color:var(--warn)}
+.notice.neutral{background:var(--blue-soft);border-left-color:var(--blue)}
+.readout{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px}
+.readout div{border:1px solid var(--line);border-radius:6px;padding:9px 12px;display:flex;flex-direction:column;gap:2px;background:var(--paper)}
+.readout b{font-family:var(--mono);font-size:1.12rem;font-variant-numeric:tabular-nums}
+.readout span{font-size:.8rem;color:var(--muted)}
+.term{font-family:var(--mono);font-size:.86rem;background:var(--code-bg);color:var(--code-ink);border-radius:6px;padding:10px 12px;height:150px;overflow-y:auto;display:flex;flex-direction:column;gap:2px}
+.term .p{color:var(--code-p)} .term .u{color:var(--code-u)} .term .o{color:#F0C26E} .term .e{color:#FF8A80}
+.cmdin{display:flex;gap:8px;align-items:center;background:var(--code-bg);border-radius:6px;padding:6px 8px}
+.cmdin label{font-family:var(--mono);color:var(--code-p);font-size:.86rem;white-space:nowrap}
+.cmdin input{flex:1;min-width:0;background:transparent;border:0;color:var(--code-ink);font-family:var(--mono);font-size:1rem;padding:6px 4px}
+.cmdin input:focus{outline:none}
+.cmdin:focus-within{box-shadow:0 0 0 2px var(--cyan)}
+.toggles{display:flex;gap:6px;flex-wrap:wrap}
+.tgl{font-family:var(--mono);font-weight:700;font-size:.8rem;padding:6px 10px;border-radius:5px;border:1px solid var(--line);background:var(--paper);cursor:pointer}
+.tgl[aria-pressed="true"]{background:var(--blue);color:var(--paper);border-color:var(--blue)}
+.tasks{display:flex;flex-direction:column;gap:6px;margin:0;padding:0;list-style:none}
+.tasks li{display:flex;gap:10px;align-items:flex-start;padding:8px 10px;border:1px solid var(--line);border-radius:6px;background:var(--paper);font-size:.95rem}
+.tasks li .ck{width:22px;height:22px;border-radius:50%;border:2px solid var(--muted);flex:none;display:grid;place-items:center;font-size:.75rem;font-weight:700;margin-top:1px}
+.tasks li.done{border-color:var(--ok);background:var(--ok-soft)}
+.tasks li.done .ck{background:var(--ok);border-color:var(--ok);color:var(--paper)}
+.ltable td,.ltable th{padding:7px 10px}
+.ltable td:first-child{font-family:var(--mono);font-weight:700}
+.ltable button{border:1px solid var(--line);background:var(--paper);border-radius:4px;padding:3px 8px;cursor:pointer;font-size:.8rem;font-weight:700}
+.ltable button[aria-pressed="false"]{opacity:.55}
+.ltable tr.cur td{background:var(--blue-soft)}
+.ltable select{font:inherit;font-size:.85rem;padding:2px 4px;border-radius:4px;border:1px solid var(--line);background:var(--paper);color:var(--ink)}
+.dosteps{display:flex;flex-direction:column;gap:6px}
+.dostep{display:flex;gap:12px;align-items:flex-start;padding:10px 12px;border:1px solid var(--line);border-radius:6px;background:var(--paper);cursor:pointer}
+.dostep input{width:20px;height:20px;margin-top:2px;accent-color:var(--ok);flex:none}
+.dostep .n{font-family:var(--mono);font-weight:700;color:var(--muted);flex:none;width:22px}
+.dostep.done{background:var(--ok-soft);border-color:transparent}
+.dostep.done span.t{text-decoration:line-through;text-decoration-color:color-mix(in srgb,var(--ok) 60%,transparent)}
+.prog{height:8px;background:var(--line2);border-radius:4px;overflow:hidden}
+.prog i{display:block;height:100%;background:var(--ok);width:0;transition:width .3s}
+.quiz{display:flex;flex-direction:column;gap:10px}
+.qitem{border:1px solid var(--line);border-radius:6px;padding:16px;background:var(--paper);display:flex;flex-direction:column;gap:10px}
+.qitem .qq{font-weight:700}
+.opts{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:8px}
+.opt{border:1.5px solid var(--line);background:var(--paper);border-radius:6px;padding:10px 12px;text-align:left;cursor:pointer;display:flex;gap:10px;align-items:flex-start}
+.opt .l{font-family:var(--mono);font-weight:700;color:var(--muted)}
+.opt:hover{border-color:var(--blue)}
+.opt.right{border-color:var(--ok);background:var(--ok-soft)}
+.opt.wrong{border-color:var(--warn);background:var(--warn-soft)}
+body.teacher .opt.key{box-shadow:inset 0 0 0 2px #E0A04A}
+.score{font-family:var(--mono);font-weight:700}
+.ws{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:18px;align-items:start}
+@media (max-width:860px){.ws{grid-template-columns:minmax(0,1fr)}}
+.wsparts{display:flex;flex-direction:column;gap:6px;margin:0;padding:0;list-style:none}
+.wsparts li{display:flex;gap:12px;align-items:baseline;border-bottom:1px solid var(--line2);padding:6px 0}
+.wsparts li b{font-family:var(--mono);color:var(--blue);flex:none}
+.wsdl{border:2px solid var(--blue);border-radius:8px;padding:18px;display:flex;flex-direction:column;gap:12px;background:var(--paper)}
+.exit{border:1.5px solid var(--ink);border-radius:8px;padding:18px;display:flex;flex-direction:column;gap:10px;background:var(--paper)}
+textarea{width:100%;min-height:90px;padding:10px 12px;border:1.5px solid var(--line);border-radius:6px;background:var(--paper);color:var(--ink);font:inherit;resize:vertical}
+textarea:focus{outline:none;border-color:var(--blue)}
+.rub td:first-child{font-family:var(--display);font-weight:700;text-transform:uppercase;letter-spacing:.04em;white-space:nowrap}
+.rub td.pt{font-family:var(--mono);text-align:right;white-space:nowrap}
+.t-only{display:none!important}
+body.teacher .t-only{display:flex!important}
+.tpanel{border:2px dashed #C9862F;background:var(--amber-soft);border-radius:8px;padding:18px;flex-direction:column;gap:12px}
+.tpanel .eyebrow{color:var(--amber)}
+.tgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:12px 22px}
+.tgrid ul{margin:4px 0 0;padding-left:1.1em;display:flex;flex-direction:column;gap:3px}
+.plan{display:flex;flex-direction:column;gap:4px}
+.plan div{display:grid;grid-template-columns:70px minmax(0,1fr);gap:10px;font-size:.95rem}
+.plan b{font-family:var(--mono);font-size:.85rem}
+.nextup{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:16px;align-items:center;background:var(--side);color:var(--side-ink);border-radius:8px;padding:20px 22px}
+.nextup .eyebrow{color:var(--side-muted)}
+.nextup .btn{background:var(--side-hi);color:#0A1016;border-color:var(--side-hi)}
+@media (max-width:600px){.nextup{grid-template-columns:minmax(0,1fr)}}
+footer.ft{color:var(--muted);font-size:.85rem;border-top:1px solid var(--line);padding-top:14px}
+/* Present view */
+.pbar{display:none}
+body.present .bar,body.present .path,body.present footer.ft{display:none}
+body.present .wrap{max-width:1280px;padding-block:28px 110px}
+body.present .wrap>.slide{display:none}
+body.present .wrap>.slide.on{display:flex}
+body.present{font-size:21px}
+body.present .pbar{display:flex;position:fixed;left:50%;transform:translateX(-50%);bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:70;gap:8px;align-items:center;background:var(--side);color:var(--side-ink);border-radius:999px;padding:8px 10px 8px 18px;box-shadow:0 10px 30px rgba(0,0,0,.35)}
+.pbar .lbl{font-family:var(--mono);font-size:.85rem;white-space:nowrap}
+.pbar button{border:0;border-radius:999px;padding:8px 14px;font-weight:700;cursor:pointer;background:rgba(255,255,255,.12);color:var(--side-ink)}
+.pbar button.x{background:#E0A04A;color:#1B2127}
+</style>
+<header class="bar"><div class="in"><a class="brand" href="#top"><svg width="34" height="34" viewBox="0 0 34 34" aria-hidden="true"><rect x="1" y="1" width="32" height="32" rx="5" fill="#1E4F8F"/><path d="M1 12H33M1 23H33M12 1V33M23 1V33" stroke="rgba(255,255,255,.18)"/><path d="M23.5 11.5a8 8 0 1 0 0 11" fill="none" stroke="#fff" stroke-width="3.2" stroke-linecap="round"/></svg><span><b>MR. C · AutoCAD</b><small>Lesson 4 of 6 · Walls</small></span></a>
+<div class="acts"><a class="btn small" href="https://claude.ai/artifact/LQNorE7A4nAGT8BqFSQxtP" target="_blank" rel="noopener">📖 Lecture</a><button class="btn small" id="teachBtn" aria-pressed="false">Teacher mode</button><button class="btn small" id="presentBtn">▶ Present</button></div></div></header>
+<main class="wrap" id="top">
+<section class="hero slide" data-title="Overview"><div class="in">
+  <div><span class="eyebrow">AutoCAD for Beginners · Lesson 4 · 90-minute block</span><h1 style="margin-top:8px">Building the Walls</h1><p class="lede">The rectangle becomes a building. Two faces per wall, exact thickness, clean intersections.</p><p class="eq">EQ: How does a single line become a wall with real thickness?</p><div class="stats"><div><b>6&quot;</b><span>Exterior walls</span></div><div><b>4&quot;</b><span>Interior walls</span></div><div><b>3</b><span>Interior walls</span></div><div><b>29&#x27;×23&#x27;</b><span>Inside size</span></div></div></div>
+  <div class="hero-plan" id="heroPlan"></div></div></section>
+<nav class="path" aria-label="Course path"><a href="https://claude.ai/artifact/FvWywWhM2MpeSMuNXui4kW" target="_blank" rel="noopener"><span class="n">1</span>Workspace</a><a href="https://claude.ai/artifact/CWMbZvBmxz77oQrH7nY5uj" target="_blank" rel="noopener"><span class="n">2</span>Precise Lines</a><a href="https://claude.ai/artifact/7KkzSYChoJYqjPYBhuyYJw" target="_blank" rel="noopener"><span class="n">3</span>Layers</a><span class="cur"><span class="n">4</span>Walls</span><a href="https://claude.ai/artifact/GgWJtbnWny1maRqMydcxte" target="_blank" rel="noopener"><span class="n">5</span>Doors &amp; Labels</a><a href="https://claude.ai/artifact/F6BBfHHoU781paxMtvvYxA" target="_blank" rel="noopener"><span class="n">6</span>Sheets &amp; Plotting</a></nav>
+<section class="sect slide" data-title="Why it matters"><div class="sh"><span class="no">01</span><h2>Why it matters</h2></div><div class="q4"><div class="c"><span class="eyebrow">What</span><p>Exterior walls form the building envelope. Interior walls divide the inside into rooms. Each wall is two parallel lines.</p></div><div class="c"><span class="eyebrow">Why</span><p>A single line has no thickness, but real walls do. OFFSET keeps both faces perfectly parallel and the exact distance apart.</p></div><div class="c"><span class="eyebrow">How</span><p>OFFSET the outline 6&quot; inward. EXPLODE, OFFSET interior wall faces, then TRIM, EXTEND and FILLET the intersections.</p></div><div class="c"><span class="eyebrow">Next</span><p>Next lesson you cut openings in these walls and add doors, windows and labels.</p></div></div><span class="eyebrow">Today I can…</span><div class="ican"><div>I can OFFSET the outline 6&quot; inward to make exterior walls.</div><div>I can place interior walls at exact distances.</div><div>I can TRIM wall intersections cleanly.</div><div>I can fix corners with EXTEND or FILLET.</div></div></section>
+<section class="sect slide" data-title="Vocabulary"><div class="sh"><span class="no">02</span><h2>Vocabulary</h2></div><div style="display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center"><p class="muted">Say the definition out loud, then tap to check.</p><button class="btn small" id="vocabAll">Reveal all</button></div><div class="vocab"><button class="vcard" aria-pressed="false"><b>Building envelope</b><span>The exterior walls that separate inside from outside.</span></button><button class="vcard" aria-pressed="false"><b>OFFSET</b><span>Makes a parallel copy at an exact distance (O).</span></button><button class="vcard" aria-pressed="false"><b>EXPLODE</b><span>Breaks a rectangle or block into separate objects (X).</span></button><button class="vcard" aria-pressed="false"><b>TRIM</b><span>Removes the parts of objects that cross other objects (TR).</span></button><button class="vcard" aria-pressed="false"><b>EXTEND</b><span>Lengthens an object to meet another object (EX).</span></button><button class="vcard" aria-pressed="false"><b>FILLET</b><span>Joins two lines at a corner; radius 0 makes a sharp corner (F).</span></button></div></section>
+<section class="sect slide" id="lab" data-title="Lab"><div class="sh"><span class="no">03</span><h2>Lab · Wall Builder</h2></div><div class="lab"><div class="lh"><h3>Wall Builder</h3><span class="muted" style="font-size:.9rem">OFFSET, EXPLODE, OFFSET and TRIM your way to clean wall junctions.</span></div><div class="lb" id="labRoot"></div></div></section>
+<section class="sect slide" data-title="In AutoCAD"><div class="sh"><span class="no">04</span><h2>In AutoCAD · Step by step</h2></div><div style="display:flex;justify-content:space-between;gap:10px;align-items:center;flex-wrap:wrap"><span class="score" id="stepCount"></span><button class="btn small" id="stepReset">Reset steps</button></div><div class="prog"><i id="stepProg"></i></div><div class="dosteps"><label class="dostep"><input type="checkbox"><span class="n">01</span><span class="t">Open your L3 file and Save As Last_First_L4.dwg. Set A-WALL current.</span></label><label class="dostep"><input type="checkbox"><span class="n">02</span><span class="t">OFFSET the house rectangle 6&quot; inside. Check the inner size is 29&#x27;-0&quot; × 23&#x27;-0&quot;.</span></label><label class="dostep"><input type="checkbox"><span class="n">03</span><span class="t">EXPLODE (X) both rectangles.</span></label><label class="dostep"><input type="checkbox"><span class="n">04</span><span class="t">OFFSET the inner west face 17&#x27;-6&quot;, then that new line 4&quot; to the east.</span></label><label class="dostep"><input type="checkbox"><span class="n">05</span><span class="t">OFFSET the inner south face 13&#x27;-6&quot; and 8&#x27;-6&quot;, then each new line 4&quot; to the north.</span></label><label class="dostep"><input type="checkbox"><span class="n">06</span><span class="t">TRIM the extra pieces so the north–south wall separates both sides and each east–west wall stops at it.</span></label><label class="dostep"><input type="checkbox"><span class="n">07</span><span class="t">TRIM the exterior inner face between the two faces of every interior wall.</span></label><label class="dostep"><input type="checkbox"><span class="n">08</span><span class="t">Zoom into every intersection. Fix gaps with EXTEND or FILLET (radius 0). Save.</span></label></div></section>
+<section class="sect slide" data-title="Quick check"><div class="sh"><span class="no">05</span><h2>Quick check</h2></div><div class="quiz"><div class="qitem" data-a="1" data-ex="OFFSET creates a parallel copy at an exact distance."><p class="qq">1. &quot;I need another line exactly 6 inches away from this one.&quot; Which command?</p><div class="opts"><button class="opt"><span class="l">A</span><span>MOVE</span></button><button class="opt key"><span class="l">B</span><span>OFFSET</span></button><button class="opt"><span class="l">C</span><span>COPY</span></button><button class="opt"><span class="l">D</span><span>EXTEND</span></button></div><p class="fb" aria-live="polite"></p></div><div class="qitem" data-a="1" data-ex="Offsetting outward adds 6&quot; on every side. Undo and click inside."><p class="qq">2. After OFFSET, your house measures 31&#x27;-0&quot; × 25&#x27;-0&quot;. What happened?</p><div class="opts"><button class="opt"><span class="l">A</span><span>Units are wrong</span></button><button class="opt key"><span class="l">B</span><span>You clicked outside instead of inside</span></button><button class="opt"><span class="l">C</span><span>Ortho was off</span></button><button class="opt"><span class="l">D</span><span>Wrong layer</span></button></div><p class="fb" aria-live="polite"></p></div><div class="qitem" data-a="1" data-ex="The inner face is already 6&quot; in: 18&#x27;-0&quot; − 6&quot; = 17&#x27;-6&quot;."><p class="qq">3. An interior wall is 18&#x27;-0&quot; from the west OUTSIDE face. How far do you offset the inner west face?</p><div class="opts"><button class="opt"><span class="l">A</span><span>18&#x27;-0&quot;</span></button><button class="opt key"><span class="l">B</span><span>17&#x27;-6&quot;</span></button><button class="opt"><span class="l">C</span><span>18&#x27;-6&quot;</span></button><button class="opt"><span class="l">D</span><span>17&#x27;-8&quot;</span></button></div><p class="fb" aria-live="polite"></p></div><div class="qitem" data-a="1" data-ex="FILLET radius 0 trims or extends both lines to a perfect corner."><p class="qq">4. Two wall lines stop just short of each other at a corner. Fastest clean fix?</p><div class="opts"><button class="opt"><span class="l">A</span><span>ERASE both</span></button><button class="opt key"><span class="l">B</span><span>FILLET with radius 0</span></button><button class="opt"><span class="l">C</span><span>OFFSET again</span></button><button class="opt"><span class="l">D</span><span>ZOOM extents</span></button></div><p class="fb" aria-live="polite"></p></div><div class="qitem" data-a="1" data-ex="Shift switches TRIM to EXTEND for that click."><p class="qq">5. In TRIM Quick mode, holding Shift while you click a line will…</p><div class="opts"><button class="opt"><span class="l">A</span><span>Delete it</span></button><button class="opt key"><span class="l">B</span><span>Extend it</span></button><button class="opt"><span class="l">C</span><span>Copy it</span></button><button class="opt"><span class="l">D</span><span>Explode it</span></button></div><p class="fb" aria-live="polite"></p></div></div><div style="display:flex;gap:14px;align-items:center;flex-wrap:wrap"><span class="score">Score: <span id="qScore"></span></span><span class="muted" id="qMsg"></span><button class="btn small" id="qReset" style="margin-left:auto">Try again</button></div></section>
+<section class="sect slide" id="worksheet" data-title="Worksheet"><div class="sh"><span class="no">06</span><h2>Worksheet</h2></div><div class="ws"><ul class="wsparts"><li><b>01</b><span><b style="font-family:var(--display);color:var(--ink)">KEY VOCABULARY</b> · <span class="muted">Write a short definition in your own words.</span></span></li><li><b>02</b><span><b style="font-family:var(--display);color:var(--ink)">WALL MATH</b> · <span class="muted">Practice house: 30&#x27;-0&quot; × 24&#x27;-0&quot; outside, 6&quot; exterior walls, 4&quot; interior walls.</span></span></li><li><b>03</b><span><b style="font-family:var(--display);color:var(--ink)">COMMAND SEQUENCE</b> · <span class="muted">Fill in what you type or click at each prompt.</span></span></li><li><b>04</b><span><b style="font-family:var(--display);color:var(--ink)">TROUBLESHOOT</b> · <span class="muted">Explain how you would fix each problem.</span></span></li><li><b>05</b><span><b style="font-family:var(--display);color:var(--ink)">IN AUTOCAD</b> · <span class="muted">Check each task when it is done in AutoCAD.</span></span></li><li><b>06</b><span><b style="font-family:var(--display);color:var(--ink)">EXIT TICKET</b> · <span class="muted">Answer in complete sentences.</span></span></li></ul>
+  <div class="wsdl"><span class="eyebrow">Lesson 4 worksheet · 3 pages</span><h3>Fillable PDF</h3><p>Download it, open it in Kami, Preview or Acrobat, type your answers, then upload it on Schoology.</p><button class="btn primary" data-ws="worksheet.pdf" data-name="AutoCAD_L4_Walls_Worksheet.pdf">Download worksheet</button><p class="dlstatus fb" aria-live="polite"></p></div></div></section>
+<section class="sect slide" data-title="Exit ticket"><div class="sh"><span class="no">07</span><h2>Exit ticket &amp; rubric</h2></div><div class="exit"><label for="exitTicket" style="font-weight:700">Explain why we offset the outline INSIDE instead of outside.</label><textarea id="exitTicket" placeholder="Type your answer. It stays on this device until you submit it on Schoology."></textarea></div>
+  <div class="tbl rub"><table><thead><tr><th>Criterion</th><th>What it looks like</th><th style="text-align:right">Points</th></tr></thead><tbody><tr><td>Exterior walls</td><td>6&quot; walls, offset inward, inner size 29&#x27;-0&quot; × 23&#x27;-0&quot;</td><td class="pt">25 pts</td></tr><tr><td>Interior walls</td><td>Three 4&quot; walls at the correct distances</td><td class="pt">25 pts</td></tr><tr><td>Clean intersections</td><td>No gaps, overlaps or leftover pieces at any wall junction</td><td class="pt">25 pts</td></tr><tr><td>Layers &amp; file</td><td>All walls on A-WALL; saved as Last_First_L4.dwg</td><td class="pt">25 pts</td></tr><tr><td>Total</td><td class="muted">Graded on your AutoCAD file</td><td class="pt"><b>100 pts</b></td></tr></tbody></table></div></section>
+<section class="tpanel t-only slide" data-title="Teacher notes"><span class="eyebrow">Teacher mode · Lesson 4</span><p><b>Objective:</b> Students will build the practice house exterior walls with OFFSET, add 4&quot; interior walls, and clean every intersection with TRIM, EXTEND and FILLET.</p>
+  <div class="tgrid"><div><h4>Pacing</h4><div class="plan"><div><b>10 min</b><span>Do Now: wall math — inner size of a 30&#x27; × 24&#x27; house with 6&quot; walls</span></div><div><b>15 min</b><span>Lecture: OFFSET, EXPLODE, TRIM, EXTEND, FILLET</span></div><div><b>15 min</b><span>Live demo: shell + one interior wall, offset the wrong way on purpose</span></div><div><b>15 min</b><span>Lab: Wall Builder (offset direction + trim game)</span></div><div><b>30 min</b><span>Independent AutoCAD steps 1–8</span></div><div><b>5 min</b><span>Quick check, save</span></div></div></div><div><h4>Common misconceptions</h4><ul><li>Drawing the second wall face by eye.</li><li>Offsetting outward.</li><li>Measuring interior walls from the inside face instead of the outside face.</li></ul></div><div><h4>Questions to ask</h4><ul><li>Which face did we draw at true size?</li><li>Why do we subtract 6&quot; before offsetting the interior wall?</li></ul></div></div><p><b>Note:</b> Circulate with a zoom check: students must zoom into every intersection before calling the walls done.</p><p class="muted">Quick-check answers are outlined in amber while Teacher mode is on.</p></section>
+<div class="nextup"><div><span class="eyebrow">Next lesson · 5 of 6</span><h3 style="margin-top:4px">Doors, Windows &amp; Room Labels</h3><p style="color:var(--side-muted)">Cut real openings, insert door and window blocks, and label every room.</p></div><a class="btn" href="https://claude.ai/artifact/B7bh4pyM8KFimsTsFiK7R4" target="_blank" rel="noopener">Start Lecture 5 ›</a></div>
+<footer class="ft">Mr. C · Architectural Design I · AutoCAD for Beginners · Lesson 4 of 6 · Practice House · 30&#x27;-0&quot; × 24&#x27;-0&quot;</footer>
+</main>
+<div class="pbar" role="toolbar" aria-label="Presentation"><span class="lbl" id="pLbl"></span><button id="pPrev" aria-label="Previous section">◀</button><button id="pNext" aria-label="Next section">▶</button><button class="x" id="pExit">Exit</button></div>
+<script>document.body.dataset.lesson = "L4";</script>
+<script>/* Shared helpers: storage, architectural length parsing/formatting, practice-house drawing, worksheet download. */
+const $ = (s, el = document) => el.querySelector(s);
+const $$ = (s, el = document) => [...el.querySelectorAll(s)];
+const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+const store = {
+  get(k, d) { try { const v = localStorage.getItem(k); return v === null ? d : JSON.parse(v); } catch { return d; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} },
+};
+
+/* ── Architectural lengths (inches internally) ─────────────────────── */
+function parseNum(t) {
+  t = t.trim();
+  if (!t) return 0;
+  let m = t.match(/^(\d+(?:\.\d+)?)\s+(\d+)\/(\d+)$/);           // 6 1/2
+  if (m) return +m[1] + (+m[2]) / (+m[3]);
+  m = t.match(/^(\d+)\/(\d+)$/);                                  // 1/2
+  if (m) return (+m[1]) / (+m[2]);
+  m = t.match(/^\d+(?:\.\d+)?$/);
+  if (m) return +t;
+  return NaN;
+}
+/** "30'" "30'-0\"" "8'6" "6\"" "6" "6 1/2\"" -> inches (NaN if invalid). */
+function parseLen(raw) {
+  let s = String(raw).trim().replace(/[’′]/g, "'").replace(/[”″]/g, '"');
+  if (!s) return NaN;
+  let neg = false;
+  if (s[0] === "-") { neg = true; s = s.slice(1).trim(); }
+  let inches;
+  if (s.includes("'")) {
+    const [ft, rest = ""] = s.split("'");
+    const f = parseNum(ft);
+    const r = parseNum(rest.replace(/^\s*-\s*/, "").replace(/"$/, ""));
+    inches = f * 12 + r;
+  } else {
+    inches = parseNum(s.replace(/"$/, ""));
+  }
+  if (!isFinite(inches)) return NaN;
+  return neg ? -inches : inches;
+}
+/** inches -> 30'-0"  /  8'-6 1/2"  /  6" (nearest 1/16) */
+function fmtLen(inches) {
+  const neg = inches < 0; let v = Math.round(Math.abs(inches) * 16) / 16;
+  let ft = Math.floor(v / 12 + 1e-9); let inch = v - ft * 12;
+  let whole = Math.floor(inch + 1e-9); let frac = Math.round((inch - whole) * 16);
+  if (frac === 16) { whole++; frac = 0; } if (whole === 12) { ft++; whole = 0; }
+  let fs = "";
+  if (frac) { let n = frac, d = 16; while (n % 2 === 0) { n /= 2; d /= 2; } fs = (whole ? " " : "") + n + "/" + d; }
+  const inStr = (whole || !fs ? whole : "") + fs + '"';
+  const out = ft ? `${ft}'-${inStr}` : inStr;
+  return (neg ? "-" : "") + out;
+}
+
+/* ── Practice house (30' x 24'), same geometry as the Floor Plan Lab ─ */
+const PLAN = {"w": 30, "h": 24, "walls": [{"r": [0, 0, 30, 0.5], "axis": "x", "open": [[5, 8, "d"], [11, 14, "w"], [23, 25, "w"]], "ext": true}, {"r": [0, 23.5, 30, 24], "axis": "x", "open": [[7, 11, "w"], [22, 26, "w"]], "ext": true}, {"r": [0, 0, 0.5, 24], "axis": "y", "open": [[5, 9, "w"]], "ext": true}, {"r": [29.5, 0, 30, 24], "axis": "y", "open": [[15, 19, "w"]], "ext": true}, {"r": [18, 0.5, 18.3333, 23.5], "axis": "y", "open": [[2, 4.5, "d"], [10.5, 13.1667, "d"]]}, {"r": [0.5, 14, 18, 14.3333], "axis": "x", "open": [[10, 13, "c"]]}, {"r": [18.3333, 9, 29.5, 9.3333], "axis": "x", "open": []}], "doors": [{"h": [5, 0.5], "leaf": [5, 3.5], "end": [8, 0.5], "label": "3'-0\" front door"}, {"h": [18.3333, 2], "leaf": [20.8333, 2], "end": [18.3333, 4.5], "label": "2'-6\" bath door"}, {"h": [18.3333, 13.1667], "leaf": [21, 13.1667], "end": [18.3333, 10.5], "label": "2'-8\" bedroom door"}], "furniture": [{"t": "rect", "r": [9, 9.75, 16, 12.75], "n": "Sofa"}, {"t": "rect", "r": [10.5, 6, 14.5, 8], "n": "Coffee table"}, {"t": "rect", "r": [0.5, 21.5, 17.5, 23.5], "n": "Counter"}, {"t": "circle", "c": [13, 18.5], "rad": 1.75, "n": "Table"}, {"t": "rect", "r": [22, 16.8333, 27, 23.5], "n": "Queen bed"}, {"t": "rect", "r": [27, 0.5, 29.5, 5.5], "n": "Tub"}, {"t": "rect", "r": [24, 0.5, 25.5, 2.8333], "n": "Toilet"}, {"t": "rect", "r": [21, 7.25, 23, 9], "n": "Sink"}], "labels": [{"t": "LIVING ROOM", "p": [4.75, 11.6]}, {"t": "KITCHEN", "p": [5.5, 17.6]}, {"t": "BEDROOM", "p": [25.25, 12.5]}, {"t": "BATH", "p": [22.6, 5.6]}]};
+const LAYER_COLOR = { "A-WALL": "var(--aci2)", "A-DOOR": "var(--aci4)", "A-WIND": "var(--aci3)", "A-FURN": "var(--aci6)", "A-DIMS": "var(--aci1)", "A-TEXT": "var(--aci7)", "A-HATCH": "var(--aci8)" };
+
+/** Returns drawable parts: [{id, layer, label, svg}] with coordinates mapped by T(x,y). */
+function planParts(T, s) {
+  const parts = [];
+  const P = (x, y) => T(x, y).map(v => +v.toFixed(2)).join(",");
+  PLAN.walls.forEach((w, i) => {
+    const [x1, y1, x2, y2] = w.r, ax = w.axis;
+    const lo = ax === "x" ? x1 : y1, hi = ax === "x" ? x2 : y2;
+    const cuts = (w.open || []).map(o => [o[0], o[1]]).sort((a, b) => a[0] - b[0]);
+    let cur = lo, pieces = [];
+    cuts.forEach(([a, b]) => { if (a > cur) pieces.push([cur, a]); cur = Math.max(cur, b); });
+    if (cur < hi) pieces.push([cur, hi]);
+    let g = "";
+    pieces.forEach(([a, b]) => {
+      const r = ax === "x" ? [a, y1, b, y2] : [x1, a, x2, b];
+      const [px1, py1] = T(r[0], r[3]), [px2, py2] = T(r[2], r[1]);
+      g += `<rect x="${px1.toFixed(2)}" y="${py1.toFixed(2)}" width="${(px2 - px1).toFixed(2)}" height="${(py2 - py1).toFixed(2)}"/>`;
+    });
+    parts.push({ id: "wall" + i, layer: "A-WALL", label: w.ext ? "Exterior wall" : "Interior wall", svg: `<g class="fill">${g}</g>` });
+    (w.open || []).forEach((o, j) => {
+      if (o[2] !== "w") return;
+      const [a, b] = o; let d = "";
+      if (ax === "x") { const ym = (y1 + y2) / 2; [y1, ym, y2].forEach(y => d += `M${P(a, y)}L${P(b, y)}`); d += `M${P(a, y1)}L${P(a, y2)}M${P(b, y1)}L${P(b, y2)}`; }
+      else { const xm = (x1 + x2) / 2; [x1, xm, x2].forEach(x => d += `M${P(x, a)}L${P(x, b)}`); d += `M${P(x1, a)}L${P(x2, a)}M${P(x1, b)}L${P(x2, b)}`; }
+      parts.push({ id: `win${i}_${j}`, layer: "A-WIND", label: "Window", svg: `<path d="${d}"/>` });
+    });
+  });
+  PLAN.doors.forEach((dr, i) => {
+    const [hx, hy] = dr.h, [lx, ly] = dr.leaf, [ex, ey] = dr.end;
+    const r = Math.hypot(lx - hx, ly - hy) * s;
+    const cross = (lx - hx) * (ey - hy) - (ly - hy) * (ex - hx); // >0: ccw in plan space -> cw on screen
+    const sweep = cross > 0 ? 0 : 1;
+    parts.push({ id: "door" + i, layer: "A-DOOR", label: dr.label, svg: `<path d="M${P(hx, hy)}L${P(lx, ly)}M${P(lx, ly)}A${r.toFixed(2)} ${r.toFixed(2)} 0 0 ${sweep} ${P(ex, ey)}"/>` });
+  });
+  PLAN.furniture.forEach((f, i) => {
+    let svg;
+    if (f.t === "rect") { const [a, b, c, d] = f.r; const [px1, py1] = T(a, d), [px2, py2] = T(c, b); svg = `<rect x="${px1.toFixed(2)}" y="${py1.toFixed(2)}" width="${(px2 - px1).toFixed(2)}" height="${(py2 - py1).toFixed(2)}" rx="${(0.15 * s).toFixed(2)}"/>`; }
+    else { const [cx, cy] = T(...f.c); svg = `<circle cx="${cx.toFixed(2)}" cy="${cy.toFixed(2)}" r="${(f.rad * s).toFixed(2)}"/>`; }
+    parts.push({ id: "furn" + i, layer: "A-FURN", label: f.n, svg });
+  });
+  PLAN.labels.forEach((l, i) => {
+    const [x, y] = T(...l.p);
+    parts.push({ id: "text" + i, layer: "A-TEXT", label: `Room label “${l.t}”`, svg: `<text x="${x.toFixed(2)}" y="${y.toFixed(2)}" text-anchor="middle" font-size="${(0.75 * s).toFixed(2)}" font-family="var(--mono)" stroke="none">${l.t}</text>` });
+  });
+  // bath floor tile (hatch)
+  let h = ""; for (let x = 19; x < 29.5; x += 1) h += `M${P(x, 0.5)}L${P(x, 9)}`; for (let y = 1.5; y < 9; y += 1) h += `M${P(18.3333, y)}L${P(29.5, y)}`;
+  parts.push({ id: "hatch0", layer: "A-HATCH", label: "Bath floor tile", svg: `<path d="${h}" stroke-width="0.6"/>` });
+  // dimensions
+  const dim = (a, b, off, horiz, txt) => {
+    let d = "", t;
+    if (horiz) { d = `M${P(a, 0)}L${P(a, off - 0.5)}M${P(b, 0)}L${P(b, off - 0.5)}M${P(a, off)}L${P(b, off)}`; const [tx, ty] = T((a + b) / 2, off + 0.35); t = `<text x="${tx.toFixed(2)}" y="${ty.toFixed(2)}" text-anchor="middle" font-size="${(0.62 * s).toFixed(2)}" font-family="var(--mono)" stroke="none">${txt}</text>`; }
+    else { d = `M${P(0, a)}L${P(off + 0.5, a)}M${P(0, b)}L${P(off + 0.5, b)}M${P(off, a)}L${P(off, b)}`; const [tx, ty] = T(off - 0.35, (a + b) / 2); t = `<text x="${tx.toFixed(2)}" y="${ty.toFixed(2)}" text-anchor="middle" font-size="${(0.62 * s).toFixed(2)}" font-family="var(--mono)" stroke="none" transform="rotate(-90 ${tx.toFixed(2)} ${ty.toFixed(2)})">${txt}</text>`; }
+    const tick = (x, y) => { const [px, py] = T(x, y); const k = 0.25 * s; return `M${(px - k).toFixed(2)},${(py + k).toFixed(2)}L${(px + k).toFixed(2)},${(py - k).toFixed(2)}`; };
+    d += horiz ? tick(a, off) + tick(b, off) : tick(off, a) + tick(off, b);
+    return `<path d="${d}"/>${t}`;
+  };
+  parts.push({ id: "dim0", layer: "A-DIMS", label: "Overall dimension 30'-0\"", svg: dim(0, 30, -2, true, "30'-0\"") });
+  parts.push({ id: "dim1", layer: "A-DIMS", label: "Overall dimension 24'-0\"", svg: dim(0, 24, -2, false, "24'-0\"") });
+  return parts;
+}
+
+/** Full plan SVG in model-space colors. opts: {s, pad, dims, only:[layers]} */
+function planSVG(opts = {}) {
+  const s = opts.s || 18, pad = opts.pad ?? 2.6;
+  const W = (30 + pad * 2) * s, H = (24 + pad * 2) * s;
+  const T = (x, y) => [(x + pad) * s, (24 + pad - y) * s];
+  let g = "";
+  planParts(T, s).forEach(p => {
+    if (opts.only && !opts.only.includes(p.layer)) return;
+    if (!opts.dims && p.layer === "A-DIMS") return;
+    const c = LAYER_COLOR[p.layer];
+    const isFill = p.layer === "A-WALL";
+    g += `<g data-layer="${p.layer}" ${isFill ? `fill="${c}" stroke="none"` : `fill="${p.layer === "A-TEXT" || p.layer === "A-DIMS" ? c : "none"}" stroke="${c}" stroke-width="1.4"`}>${p.svg}</g>`;
+  });
+  return `<svg viewBox="0 0 ${W.toFixed(0)} ${H.toFixed(0)}" role="img" aria-label="${esc(opts.label || "Practice house floor plan, 30 feet by 24 feet")}" style="background:var(--ms-bg)">${gridSVG(W, H, s)}${g}</svg>`;
+}
+function gridSVG(W, H, s, minor = 1, major = 5) {
+  let a = "", b = "";
+  for (let x = 0; x <= W / s; x += minor) { const d = `M${(x * s).toFixed(1)},0V${H}`; if (Math.round(x) % major) a += d; else b += d; }
+  for (let y = 0; y <= H / s; y += minor) { const d = `M0,${(y * s).toFixed(1)}H${W}`; if (Math.round(y) % major) a += d; else b += d; }
+  return `<path d="${a}" stroke="var(--ms-grid)" stroke-width="1" fill="none"/><path d="${b}" stroke="var(--ms-grid2)" stroke-width="1" fill="none"/>`;
+}
+
+/* ── Worksheet download through the viewer's downloads capability ─── */
+async function saveWorksheet(btn, file, filename) {
+  const status = btn.parentElement.querySelector(".dlstatus");
+  const say = (t, bad) => { if (status) { status.textContent = t; status.className = "dlstatus fb " + (bad ? "no" : "ok"); } };
+  btn.disabled = true;
+  try {
+    const dl = window.claude?.use ? await window.claude.use("downloads") : null;
+    if (!dl) { say("Downloads aren't available in this view. Ask your teacher for the worksheet on Schoology.", true); return; }
+    const res = await fetch(file);
+    if (!res.ok) throw new Error("missing");
+    const blob = await res.blob();
+    await dl.save({ filename, data: blob });
+    say("Worksheet saved. Open it in a PDF app to type your answers.");
+  } catch (e) {
+    if (e && e.code === "declined") say("Download cancelled.", true);
+    else if (e && e.code === "rate_limited") say("A download prompt is already open. Try again in a moment.", true);
+    else say("The worksheet couldn't be downloaded here. Ask your teacher for it on Schoology.", true);
+  } finally { btn.disabled = false; }
+}
+function inline(t) { return esc(t).replace(/`([^`]+)`/g, '<span class="cmd">$1</span>').replace(/\*\*([^*]+)\*\*/g, "<b>$1</b>"); }
+
+/* Interactive labs, one per lesson. Each LABS[key](root) builds its UI inside the lab body. */
+const LABS = {};
+const svgEl = (vb, inner, label, extra = "") => `<svg viewBox="${vb}" role="img" aria-label="${esc(label)}" ${extra}>${inner}</svg>`;
+const notice = (el, text, kind = "") => { el.className = "notice " + kind; el.innerHTML = text; };
+
+/* ── L1 · Workspace Explorer ─────────────────────────────────────── */
+LABS.workspace = root => {
+  const R = [
+    ["appmenu", "Application Menu", "The red A. New, Open, Save, Save As and Print live here.", [0, 0, 46, 40]],
+    ["qat", "Quick Access Toolbar", "One-click New, Open, Save, Undo, Redo and Plot.", [50, 7, 210, 26]],
+    ["tabs", "Ribbon tabs", "Home, Insert, Annotate, View… Each tab swaps the set of panels below it.", [0, 40, 1000, 24]],
+    ["ribbon", "Ribbon panels", "Groups of tools: Draw, Modify, Annotation, Layers, Block, Properties.", [0, 64, 1000, 84]],
+    ["filetabs", "File tabs", "Switch between the Start tab and every open drawing.", [0, 148, 1000, 24]],
+    ["drawing", "Drawing area", "Model space. Draw the building here at full size. It has no edge.", [0, 172, 1000, 348]],
+    ["cross", "Crosshairs", "Your cursor. Shows where the next point goes.", [380, 290, 120, 100]],
+    ["viewcube", "ViewCube", "Click a face or corner to change the view. In 2D you will rarely need it.", [886, 186, 92, 74]],
+    ["navbar", "Navigation bar", "Pan, Zoom and orbit tools. The mouse wheel is faster.", [950, 272, 30, 132]],
+    ["ucs", "UCS icon", "Shows which way X and Y point. 0° points along X (east).", [16, 430, 70, 70]],
+    ["cmd", "Command line", "AutoCAD asks questions here and you answer. Watch it constantly.", [150, 482, 700, 30]],
+    ["mltabs", "Model / Layout tabs", "Model = the building. Layout tabs = printable sheets.", [0, 520, 300, 26]],
+    ["status", "Status bar", "Drawing aids: Grid, Ortho, Polar, Object Snap, Lineweight.", [300, 520, 700, 26]],
+  ];
+  const plan = planSVG({ s: 9, pad: 1.5 }).replace("<svg ", '<svg x="260" y="200" width="500" height="280" ');
+  const panel = (x, n, tools) => `<g transform="translate(${x},68)"><rect width="150" height="76" rx="3" fill="var(--ms-bg)" stroke="#3A4654"/>${tools.map((t, i) => `<rect x="${8 + i * 34}" y="8" width="28" height="28" rx="3" fill="#2B3642"/>`).join("")}<text x="75" y="66" text-anchor="middle" font-size="11" fill="var(--ms-muted)" font-family="var(--body)">${n}</text></g>`;
+  const art = `
+    <rect width="1000" height="546" fill="#262E37"/>
+    <rect width="46" height="40" fill="#C8302E"/><text x="23" y="28" text-anchor="middle" font-size="22" font-weight="700" fill="#fff" font-family="var(--display)">A</text>
+    ${[0, 1, 2, 3, 4, 5].map(i => `<rect x="${56 + i * 34}" y="11" width="22" height="18" rx="3" fill="#3A4654"/>`).join("")}
+    <text x="500" y="26" text-anchor="middle" font-size="13" fill="var(--ms-muted)" font-family="var(--body)">Autodesk AutoCAD 2026  ·  Practice_House.dwg</text>
+    <rect y="40" width="1000" height="24" fill="#2B3642"/>
+    ${["Home", "Insert", "Annotate", "Parametric", "View", "Manage", "Output"].map((t, i) => `<text x="${16 + i * 82}" y="57" font-size="13" fill="${i ? "var(--ms-muted)" : "#fff"}" font-weight="${i ? 400 : 700}" font-family="var(--body)">${t}</text>`).join("")}
+    <rect y="64" width="1000" height="84" fill="#222A33"/>
+    ${[["Draw", 4], ["Modify", 4], ["Annotation", 3], ["Layers", 4], ["Block", 2], ["Properties", 3]].map(([n, k], i) => panel(6 + i * 162, n, Array(k).fill(0))).join("")}
+    <rect y="148" width="1000" height="24" fill="#2B3642"/>
+    <rect x="8" y="150" width="70" height="22" fill="#222A33"/><text x="43" y="165" text-anchor="middle" font-size="12" fill="var(--ms-muted)" font-family="var(--body)">Start</text>
+    <rect x="82" y="150" width="160" height="22" fill="var(--ms-bg)"/><text x="162" y="165" text-anchor="middle" font-size="12" fill="#fff" font-family="var(--body)">Practice_House ×</text>
+    <rect y="172" width="1000" height="348" fill="var(--ms-bg)"/>
+    ${plan}
+    <g stroke="#fff" stroke-width="1.2"><path d="M380,340H500M440,290V390"/><rect x="434" y="334" width="12" height="12" fill="none"/></g>
+    <g transform="translate(886,186)"><path d="M18,22L46,10L74,22L46,34Z" fill="#9AA6B2"/><path d="M18,22V52L46,64V34Z" fill="#6C7884"/><path d="M74,22V52L46,64V34Z" fill="#808C98"/><text x="46" y="25" text-anchor="middle" font-size="8" fill="#1B2127" font-family="var(--body)">TOP</text></g>
+    <rect x="950" y="272" width="30" height="132" rx="4" fill="#2B3642"/>${[0, 1, 2, 3].map(i => `<circle cx="965" cy="${292 + i * 30}" r="8" fill="#3A4654"/>`).join("")}
+    <g transform="translate(26,490)" stroke-width="2.5" fill="none"><path d="M0,0H50" stroke="#FF4B4B"/><path d="M0,0V-50" stroke="#4BD964"/><text x="54" y="5" font-size="12" fill="#FF4B4B" stroke="none" font-family="var(--mono)">X</text><text x="-5" y="-55" font-size="12" fill="#4BD964" stroke="none" font-family="var(--mono)">Y</text></g>
+    <rect x="150" y="482" width="700" height="30" rx="4" fill="#10171E" stroke="#3A4654"/>
+    <text x="164" y="502" font-size="13" fill="var(--ms-muted)" font-family="var(--mono)">▸ Type a command</text>
+    <rect y="520" width="1000" height="26" fill="#2B3642"/>
+    <text x="14" y="537" font-size="12" fill="#fff" font-weight="700" font-family="var(--body)">Model</text><text x="70" y="537" font-size="12" fill="var(--ms-muted)" font-family="var(--body)">Layout1   Layout2   +</text>
+    ${["MODEL", "#", "⊥", "◎", "∠", "□", "≡", "⚙"].map((t, i) => `<text x="${620 + i * 44}" y="537" font-size="12" fill="${[2, 3].includes(i) ? "#7AAEF5" : "var(--ms-muted)"}" font-family="var(--mono)">${t}</text>`).join("")}`;
+  const hits = R.map(([id, , , [x, y, w, h]]) => `<rect class="hz" data-id="${id}" x="${x}" y="${y}" width="${w}" height="${h}" fill="transparent" stroke="transparent" stroke-width="3" style="cursor:pointer"/>`).join("");
+  root.innerHTML = `
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between">
+      <div class="seg" role="group" aria-label="Mode"><button data-m="explore" aria-pressed="true">Explore</button><button data-m="find" aria-pressed="false">Find It (timed)</button></div>
+      <span class="muted" id="wsHint">Click any part of the screen to learn what it does.</span>
+    </div>
+    <div class="two">
+      <div class="ms" style="cursor:crosshair">${svgEl("0 0 1000 546", art + hits, "Mock AutoCAD 2026 window with clickable areas")}</div>
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div class="info" id="wsInfo"><span class="eyebrow">Selected</span><h3>Nothing yet</h3><p class="muted">Tap a part of the AutoCAD window.</p></div>
+        <div class="readout"><div><b id="wsFound">0 / ${R.length}</b><span>Areas explored</span></div><div><b id="wsTime">—</b><span>Find It time</span></div></div>
+        <div class="notice neutral" id="wsNote">Find It mode names an area. Click it as fast as you can.</div>
+      </div>
+    </div>`;
+  const svg = $("svg", root), info = $("#wsInfo", root), note = $("#wsNote", root);
+  const seen = new Set();
+  let mode = "explore", queue = [], t0 = 0, tick = null, misses = 0;
+  const outline = id => $$(".hz", svg).forEach(r => r.setAttribute("stroke", r.dataset.id === id ? "#E0A04A" : "transparent"));
+  const show = id => { const r = R.find(x => x[0] === id); info.innerHTML = `<span class="eyebrow">Selected</span><h3>${r[1]}</h3><p>${r[2]}</p>`; outline(id); };
+  const nextFind = () => {
+    if (!queue.length) {
+      clearInterval(tick); const secs = ((Date.now() - t0) / 1000).toFixed(1);
+      const best = store.get("acad-ws-best", null);
+      if (best === null || +secs < best) store.set("acad-ws-best", +secs);
+      notice(note, `Done! ${R.length} areas in ${secs} s with ${misses} miss${misses === 1 ? "" : "es"}. Best: ${store.get("acad-ws-best", secs)} s.`, "");
+      $("#wsHint", root).textContent = "Press Find It again to replay.";
+      mode = "explore"; $$(".seg button", root).forEach(b => b.setAttribute("aria-pressed", b.dataset.m === "explore")); return;
+    }
+    notice(note, `Find: <b>${R.find(r => r[0] === queue[0])[1]}</b> (${R.length - queue.length + 1} of ${R.length})`, "neutral");
+  };
+  $$(".seg button", root).forEach(b => b.addEventListener("click", () => {
+    mode = b.dataset.m; $$(".seg button", root).forEach(x => x.setAttribute("aria-pressed", x === b));
+    clearInterval(tick); outline(null);
+    if (mode === "find") {
+      queue = R.map(r => r[0]).sort(() => Math.random() - .5); misses = 0; t0 = Date.now();
+      tick = setInterval(() => $("#wsTime", root).textContent = ((Date.now() - t0) / 1000).toFixed(0) + " s", 250);
+      $("#wsHint", root).textContent = "Click the area named below."; nextFind();
+    } else { notice(note, "Find It mode names an area. Click it as fast as you can.", "neutral"); $("#wsHint", root).textContent = "Click any part of the screen to learn what it does."; }
+  }));
+  svg.addEventListener("click", e => {
+    // smallest region under the pointer wins (crosshairs over drawing area, etc.)
+    const pt = svg.createSVGPoint(); pt.x = e.clientX; pt.y = e.clientY;
+    const p = pt.matrixTransform(svg.getScreenCTM().inverse());
+    const hitsAt = R.filter(([, , , [x, y, w, h]]) => p.x >= x && p.x <= x + w && p.y >= y && p.y <= y + h).sort((a, b) => a[3][2] * a[3][3] - b[3][2] * b[3][3]);
+    if (!hitsAt.length) return;
+    const id = hitsAt[0][0];
+    if (mode === "explore") { show(id); seen.add(id); $("#wsFound", root).textContent = `${seen.size} / ${R.length}`; return; }
+    if (id === queue[0] || hitsAt.some(h => h[0] === queue[0])) { show(queue[0]); seen.add(queue.shift()); $("#wsFound", root).textContent = `${seen.size} / ${R.length}`; nextFind(); }
+    else { misses++; notice(note, `That's the <b>${hitsAt[0][1]}</b>. Find: <b>${R.find(r => r[0] === queue[0])[1]}</b>`, "bad"); }
+  });
+};
+
+/* ── L2 · Command Line Simulator ─────────────────────────────────── */
+LABS.cmdsim = root => {
+  root.innerHTML = `
+    <div class="two">
+      <div style="display:flex;flex-direction:column;gap:8px;min-width:0">
+        <div class="ms" id="csView" style="aspect-ratio:4/3"></div>
+        <div class="term" id="csTerm" aria-live="polite"></div>
+        <div class="cmdin"><label for="csIn" id="csPrompt">Command:</label><input id="csIn" autocomplete="off" spellcheck="false" placeholder="type L, REC, U, E, Z E"></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center">
+          <div class="toggles"><button class="tgl" id="csOrtho" aria-pressed="true">ORTHO F8</button><button class="tgl" id="csEsc">ESC</button></div>
+          <span class="muted" style="font-size:.85rem">Cursor points:</span>
+          <div class="seg" id="csDir" role="group" aria-label="Cursor direction">${[["←", 180], ["↑", 90], ["→", 0], ["↓", 270]].map(([t, a]) => `<button data-a="${a}" aria-pressed="${a === 0}" aria-label="Point cursor ${a}°">${t}</button>`).join("")}</div>
+        </div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div class="info"><span class="eyebrow">Challenges</span><ul class="tasks" id="csTasks"></ul></div>
+        <div class="readout"><div><b id="csLast">—</b><span>Last point</span></div><div><b id="csLen">—</b><span>Last length</span></div></div>
+        <div class="notice neutral" id="csNote">Type <span class="cmd">L</span> and press Enter to start a line.</div>
+      </div>
+    </div>`;
+  const view = $("#csView", root), term = $("#csTerm", root), input = $("#csIn", root), prm = $("#csPrompt", root), note = $("#csNote", root);
+  const tasks = [
+    ["Draw a 20'-0\" horizontal line (direct distance: point → and type 20').", o => o.t === "line" && Math.abs(o.b[1] - o.a[1]) < .01 && Math.abs(Math.abs(o.b[0] - o.a[0]) - 240) < .01],
+    ["Draw a 12'-0\" line straight up with @12'<90.", o => o.t === "line" && Math.abs(o.b[0] - o.a[0]) < .01 && Math.abs(o.b[1] - o.a[1] - 144) < .01],
+    ["Draw a line and type 30 with no foot mark. Then Z E to find it.", o => o.t === "line" && Math.abs(Math.hypot(o.b[0] - o.a[0], o.b[1] - o.a[1]) - 30) < .01],
+    ["Draw the house outline: REC, a first corner, then @30',24'.", o => o.t === "rect" && Math.abs(Math.abs(o.b[0] - o.a[0]) - 360) < .01 && Math.abs(Math.abs(o.b[1] - o.a[1]) - 288) < .01],
+  ];
+  const done = new Set();
+  const renderTasks = () => $("#csTasks", root).innerHTML = tasks.map(([t], i) => `<li class="${done.has(i) ? "done" : ""}"><span class="ck">${done.has(i) ? "✓" : i + 1}</span><span>${inline(t)}</span></li>`).join("");
+  let objs = [], vw = { x: 0, y: 0, w: 480, h: 360 }, ortho = true, dir = 0;
+  let st = null; // {cmd, phase, pts:[]}
+  let last = null;
+  const log = (t, c = "o") => { term.insertAdjacentHTML("beforeend", `<div class="${c}">${esc(t)}</div>`); term.scrollTop = term.scrollHeight; };
+  const fmtPt = p => `${fmtLen(p[0])}, ${fmtLen(p[1])}`;
+  const draw = () => {
+    const { x, y, w, h } = vw; const step = w > 1200 ? 120 : w > 300 ? 12 : 1;
+    let grid = "";
+    for (let gx = Math.ceil(x / step) * step; gx <= x + w; gx += step) grid += `M${gx},${-(y + h)}V${-y}`;
+    for (let gy = Math.ceil(y / step) * step; gy <= y + h; gy += step) grid += `M${x},${-gy}H${x + w}`;
+    const L = objs.map(o => o.t === "line" ? `<path d="M${o.a[0]},${-o.a[1]}L${o.b[0]},${-o.b[1]}"/>` : `<rect x="${Math.min(o.a[0], o.b[0])}" y="${-Math.max(o.a[1], o.b[1])}" width="${Math.abs(o.b[0] - o.a[0])}" height="${Math.abs(o.b[1] - o.a[1])}" fill="none"/>`).join("");
+    const rub = st && st.pts.length && st.cmd === "LINE" ? st.pts.slice(-1).map(p => `<circle cx="${p[0]}" cy="${-p[1]}" r="${w / 120}" fill="var(--sel)" stroke="none"/>`).join("") : "";
+    const scaleTxt = `${fmtLen(w)} wide`;
+    view.innerHTML = svgEl(`${x} ${-(y + h)} ${w} ${h}`, `<path d="${grid}" stroke="var(--ms-grid2)" stroke-width="1" vector-effect="non-scaling-stroke" fill="none"/>
+      <g stroke="var(--aci2)" stroke-width="2" vector-effect="non-scaling-stroke" fill="none" style="vector-effect:non-scaling-stroke">${L.replace(/<(path|rect)/g, '<$1 vector-effect="non-scaling-stroke"')}</g>${rub}`, "Model space view", 'preserveAspectRatio="xMidYMid meet" style="width:100%;height:100%"')
+      + `<span style="position:absolute;right:8px;bottom:6px;font:600 .75rem var(--mono);color:var(--ms-muted)">view ${scaleTxt} · grid ${step === 12 ? "1'" : step === 120 ? "10'" : '1"'}</span>`;
+    $("#csLast", root).textContent = last ? fmtPt(last) : "—";
+  };
+  const setPrompt = () => {
+    if (!st) prm.textContent = "Command:";
+    else if (st.cmd === "LINE") prm.textContent = st.pts.length ? `Specify next point or [${st.pts.length > 2 ? "Close/" : ""}Undo]:` : "Specify first point:";
+    else if (st.cmd === "REC") prm.textContent = st.pts.length ? "Specify other corner point or [Area/Dimensions/Rotation]:" : "Specify first corner point:";
+    else if (st.cmd === "ZOOM") prm.textContent = "[All/Center/Extents/Window] <real time>:";
+  };
+  const addObj = o => {
+    objs.push(o);
+    const len = o.t === "line" ? Math.hypot(o.b[0] - o.a[0], o.b[1] - o.a[1]) : null;
+    $("#csLen", root).textContent = o.t === "line" ? fmtLen(len) : `${fmtLen(Math.abs(o.b[0] - o.a[0]))} × ${fmtLen(Math.abs(o.b[1] - o.a[1]))}`;
+    tasks.forEach(([t, f], i) => { if (!done.has(i) && f(o)) { done.add(i); notice(note, `Challenge ${i + 1} complete. ${i === 2 ? "Notice how tiny 30 inches is next to 30 feet." : ""}${done.size === tasks.length ? " All four done!" : ""}`); } });
+    renderTasks();
+  };
+  const zoomExt = () => {
+    if (!objs.length) { vw = { x: 0, y: 0, w: 480, h: 360 }; return; }
+    let xs = [], ys = []; objs.forEach(o => { xs.push(o.a[0], o.b[0]); ys.push(o.a[1], o.b[1]); });
+    let x0 = Math.min(...xs), x1 = Math.max(...xs), y0 = Math.min(...ys), y1 = Math.max(...ys);
+    let w = Math.max(x1 - x0, 12), h = Math.max(y1 - y0, 9);
+    if (w / h > 4 / 3) h = w * 3 / 4; else w = h * 4 / 3;
+    w *= 1.15; h *= 1.15;
+    vw = { x: (x0 + x1) / 2 - w / 2, y: (y0 + y1) / 2 - h / 2, w, h };
+  };
+  /** Parse point input relative to `from`. Returns [x,y] or {err}. */
+  const parsePt = (raw, from) => {
+    let s = raw.replace(/\s+/g, "");
+    if (s[0] === "@") {
+      if (!from) return { err: "There is no last point yet. Give an absolute point first (like 5',5')." };
+      s = s.slice(1);
+      if (s.includes("<")) { const [d, a] = s.split("<"); const L = parseLen(d), A = parseFloat(a); if (!isFinite(L) || !isFinite(A)) return { err: "Polar input is @distance<angle, like @12'<90." }; return [from[0] + L * Math.cos(A * Math.PI / 180), from[1] + L * Math.sin(A * Math.PI / 180)].map(v => Math.round(v * 1e4) / 1e4); }
+      const [a, b] = s.split(","); const X = parseLen(a), Y = parseLen(b);
+      if (!isFinite(X) || !isFinite(Y)) return { err: "Relative input is @x,y, like @12',0." };
+      return [from[0] + X, from[1] + Y];
+    }
+    if (s.includes(",")) { const [a, b] = s.split(","); const X = parseLen(a), Y = parseLen(b); if (!isFinite(X) || !isFinite(Y)) return { err: "Absolute input is x,y, like 5',5'." }; return [X, Y]; }
+    const d = parseLen(s);
+    if (!isFinite(d)) return { err: "Point or option keyword required." };
+    if (!from) return { err: "Direct distance needs a last point. Give the first point as x,y." };
+    const ang = dir + (ortho ? 0 : 7);
+    if (!ortho) notice(note, "Ortho was off, so the line followed the cursor at a slight angle (7°). Turn on F8 and Undo.", "bad");
+    return [from[0] + d * Math.cos(ang * Math.PI / 180), from[1] + d * Math.sin(ang * Math.PI / 180)].map(v => Math.round(v * 1e4) / 1e4);
+  };
+  const run = raw => {
+    const v = raw.trim(), V = v.toUpperCase();
+    log((prm.textContent + " " + v).trim(), "u");
+    if (!st) {
+      if (!v) return;
+      if (["L", "LINE"].includes(V)) { st = { cmd: "LINE", pts: [] }; log("LINE", "o"); }
+      else if (["REC", "RECTANG", "RECTANGLE"].includes(V)) st = { cmd: "REC", pts: [] };
+      else if (["U", "UNDO"].includes(V)) { if (objs.length) { objs.pop(); log("Undo: removed the last object."); $("#csLen", root).textContent = "—"; } else log("Everything has been undone.", "e"); }
+      else if (["E", "ERASE"].includes(V)) { if (objs.length) { objs.pop(); log("1 object erased (last object)."); } else log("Nothing to erase.", "e"); }
+      else if (["Z E", "ZE", "ZOOM E", "ZOOM EXTENTS"].includes(V)) { zoomExt(); log("Zoom Extents: every object fills the screen."); }
+      else if (["Z", "ZOOM"].includes(V)) st = { cmd: "ZOOM", pts: [] };
+      else if (V === "C") log("Close only works inside LINE after two segments.", "e");
+      else log(`Unknown command "${V}". Try L, REC, U, E or Z E.`, "e");
+      setPrompt(); draw(); return;
+    }
+    if (st.cmd === "ZOOM") { if (["E", "EXTENTS"].includes(V)) { zoomExt(); log("Zoom Extents."); } st = null; setPrompt(); draw(); return; }
+    if (st.cmd === "LINE") {
+      if (!v) { st = null; log("LINE ended."); setPrompt(); draw(); return; }
+      if (V === "U") { if (st.pts.length > 1) { st.pts.pop(); objs.pop(); last = st.pts.at(-1); log("Undid the last segment."); } else log("Nothing to undo in this LINE.", "e"); setPrompt(); draw(); return; }
+      if (V === "C") { if (st.pts.length > 2) { const a = st.pts.at(-1), b = st.pts[0]; addObj({ t: "line", a, b }); last = b; st = null; log("Closed back to the first point."); } else log("Close needs at least two segments.", "e"); setPrompt(); draw(); return; }
+      const from = st.pts.length ? st.pts.at(-1) : last;
+      if (!st.pts.length && !v.startsWith("@") && !v.includes(",")) { log("Give the first point as x,y (for example 5',5') or @ from the last point.", "e"); return; }
+      const p = parsePt(v, from);
+      if (p.err) { log(p.err, "e"); return; }
+      if (st.pts.length) addObj({ t: "line", a: st.pts.at(-1), b: p });
+      st.pts.push(p); last = p; setPrompt(); draw(); return;
+    }
+    if (st.cmd === "REC") {
+      if (!st.pts.length) {
+        const p = v ? parsePt(v, last) : (last || [60, 60]);
+        if (p.err) { log(p.err, "e"); return; }
+        st.pts.push(p); last = p; setPrompt(); draw(); return;
+      }
+      if (!v.startsWith("@") && !v.includes(",")) { log("Give the other corner, for example @30',24'.", "e"); return; }
+      const p = parsePt(v, st.pts[0]);
+      if (p.err) { log(p.err, "e"); return; }
+      addObj({ t: "rect", a: st.pts[0], b: p }); last = p; st = null; setPrompt(); draw();
+    }
+  };
+  input.addEventListener("keydown", e => {
+    if (e.key === "Enter") { e.preventDefault(); run(input.value); input.value = ""; }
+    else if (e.key === "Escape") { st = null; log("*Cancel*", "e"); setPrompt(); draw(); }
+    else if (e.key === "F8") { e.preventDefault(); $("#csOrtho", root).click(); }
+    else if (e.key === " " && !input.value.includes(",") && !/[0-9'"@<]/.test(input.value)) { e.preventDefault(); run(input.value); input.value = ""; }
+  });
+  $("#csOrtho", root).addEventListener("click", e => { ortho = !ortho; e.currentTarget.setAttribute("aria-pressed", ortho); log(`<Ortho ${ortho ? "on" : "off"}>`); input.focus(); });
+  $("#csEsc", root).addEventListener("click", () => { st = null; log("*Cancel*", "e"); setPrompt(); draw(); input.focus(); });
+  $$("#csDir button", root).forEach(b => b.addEventListener("click", () => { dir = +b.dataset.a; $$("#csDir button", root).forEach(x => x.setAttribute("aria-pressed", x === b)); input.focus(); }));
+  log("AutoCAD 2026 · Units: Architectural · 1 unit = 1 inch", "p");
+  renderTasks(); setPrompt(); draw();
+};
+
+/* ── L3 · Layer Manager + Fix the Layers ─────────────────────────── */
+LABS.layers = root => {
+  const LAY = [["A-WALL", 2], ["A-DOOR", 4], ["A-WIND", 3], ["A-FURN", 6], ["A-DIMS", 1], ["A-TEXT", 7], ["A-HATCH", 8]];
+  const s = 16, pad = 3, W = (30 + pad * 2) * s, H = (24 + pad * 2) * s;
+  const T = (x, y) => [(x + pad) * s, (24 + pad - y) * s];
+  const parts = planParts(T, s);
+  const correct = Object.fromEntries(parts.map(p => [p.id, p.layer]));
+  const WRONG = { furn0: "A-WALL", text2: "A-DIMS", door0: "A-WIND", win0_1: "A-FURN" };
+  let assign = { ...correct }, state = Object.fromEntries(LAY.map(([n]) => [n, { on: true, lock: false }])), cur = "A-WALL", sel = null, mode = "manage";
+  root.innerHTML = `
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;justify-content:space-between">
+      <div class="seg" role="group" aria-label="Mode"><button data-m="manage" aria-pressed="true">Layer Manager</button><button data-m="fix" aria-pressed="false">Fix the Layers</button></div>
+      <span class="muted">Current layer: <span class="cmd" id="lyCur">A-WALL</span></span>
+    </div>
+    <div class="two">
+      <div class="ms" id="lyView"></div>
+      <div style="display:flex;flex-direction:column;gap:12px;min-width:0">
+        <div class="tbl"><table class="ltable"><thead><tr><th>Layer</th><th>On</th><th>Lock</th><th>Color</th></tr></thead><tbody id="lyRows"></tbody></table></div>
+        <div class="info" id="lySel"><span class="eyebrow">Selection</span><p class="muted">Click an object in the drawing.</p></div>
+        <div class="notice neutral" id="lyNote">Turn layers off and on. Click a layer name to make it current.</div>
+      </div>
+    </div>`;
+  const note = $("#lyNote", root);
+  const colorOf = n => `var(--aci${LAY.find(l => l[0] === n)[1]})`;
+  const rows = () => $("#lyRows", root).innerHTML = LAY.map(([n, c]) => `<tr class="${n === cur ? "cur" : ""}"><td><button data-cur="${n}" title="Make current" style="border:0;background:none;padding:0;font:inherit;font-family:var(--mono);font-weight:700;cursor:pointer;color:inherit">${n === cur ? "✓ " : ""}${n}</button></td><td><button data-on="${n}" aria-pressed="${state[n].on}" aria-label="${n} on">${state[n].on ? "On" : "Off"}</button></td><td><button data-lock="${n}" aria-pressed="${!state[n].lock}" aria-label="${n} lock">${state[n].lock ? "🔒" : "Open"}</button></td><td><span class="swatch" style="background:${colorOf(n)}"></span><span class="muted" style="font-size:.8rem">${c}</span></td></tr>`).join("");
+  const draw = () => {
+    let g = "";
+    parts.forEach(p => {
+      const L = assign[p.id]; if (!state[L].on) return;
+      const c = colorOf(L), isWall = p.id.startsWith("wall"), isText = p.layer === "A-TEXT" || p.layer === "A-DIMS";
+      const st = isWall ? `fill="${c}" stroke="none"` : `fill="${isText ? c : "none"}" stroke="${c}" stroke-width="1.5"`;
+      const selSt = sel === p.id ? `<g fill="none" stroke="var(--sel)" stroke-width="3" stroke-dasharray="6 4" pointer-events="none">${p.svg}</g>` : "";
+      g += `<g data-id="${p.id}" style="cursor:pointer" ${state[L].lock ? 'opacity=".45"' : ""}><g ${st}>${p.svg}</g><g fill="transparent" stroke="transparent" stroke-width="12" pointer-events="all">${p.svg}</g>${selSt}</g>`;
+    });
+    $("#lyView", root).innerHTML = svgEl(`0 0 ${W} ${H}`, gridSVG(W, H, s) + g, "Practice house drawn on its layers");
+  };
+  const showSel = () => {
+    const box = $("#lySel", root);
+    if (!sel) { box.innerHTML = `<span class="eyebrow">Selection</span><p class="muted">Click an object in the drawing.</p>`; return; }
+    const p = parts.find(x => x.id === sel), L = assign[sel];
+    box.innerHTML = `<span class="eyebrow">Selection · Properties</span><h3>${esc(p.label)}</h3><p>Layer: <span class="cmd">${L}</span></p>
+      <label style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">Move to layer <select id="lyMove" style="font:inherit;padding:4px 6px;border-radius:5px;border:1px solid var(--line);background:var(--paper);color:var(--ink)">${LAY.map(([n]) => `<option ${n === L ? "selected" : ""}>${n}</option>`).join("")}</select></label>`;
+    $("#lyMove", box).addEventListener("change", e => {
+      if (state[L].lock) { notice(note, `${L} is locked. You can select it, but you can't change it. Unlock the layer first.`, "bad"); e.target.value = L; return; }
+      assign[sel] = e.target.value; draw(); showSel(); check();
+    });
+  };
+  const check = () => {
+    if (mode !== "fix") return;
+    const left = Object.keys(WRONG).filter(id => assign[id] !== correct[id]).length;
+    const broke = Object.keys(correct).filter(id => !WRONG[id] && assign[id] !== correct[id]).length;
+    if (broke) notice(note, `Careful: you moved a correct object. ${left} wrong object${left === 1 ? "" : "s"} still to fix.`, "bad");
+    else if (!left) notice(note, "All four objects are on the right layers. Turn layers off one at a time to prove it.");
+    else notice(note, `${4 - left} of 4 fixed. Hint: turn off one layer at a time and look for what disappears that shouldn't.`, "neutral");
+  };
+  root.addEventListener("click", e => {
+    const b = e.target.closest("button"); if (b && root.contains(b)) {
+      if (b.dataset.m) { mode = b.dataset.m; $$(".seg button", root).forEach(x => x.setAttribute("aria-pressed", x === b)); assign = mode === "fix" ? { ...correct, ...WRONG } : { ...correct }; sel = null; draw(); showSel(); mode === "fix" ? notice(note, "Four objects are on the wrong layer. Find them, select each one and move it to the right layer.", "neutral") : notice(note, "Turn layers off and on. Click a layer name to make it current.", "neutral"); return; }
+      if (b.dataset.on) { const n = b.dataset.on; if (n === cur && state[n].on) notice(note, `${n} is current. AutoCAD warns you before turning off the current layer, because new objects would be invisible.`, "bad"); state[n].on = !state[n].on; rows(); draw(); return; }
+      if (b.dataset.lock) { const n = b.dataset.lock; state[n].lock = !state[n].lock; rows(); draw(); showSel(); return; }
+      if (b.dataset.cur) { cur = b.dataset.cur; $("#lyCur", root).textContent = cur; if (!state[cur].on) { state[cur].on = true; } rows(); draw(); notice(note, `${cur} is now current. Everything you draw next lands on it.`, "neutral"); return; }
+    }
+    const g = e.target.closest("[data-id]"); if (g && $("#lyView", root).contains(g)) { sel = g.dataset.id; draw(); showSel(); }
+    else if (e.target.closest("#lyView")) { sel = null; draw(); showSel(); }
+  });
+  rows(); draw(); showSel();
+};
+
+/* ── L4 · Wall Builder (Offset → Explode → Offset → Trim) ────────── */
+LABS.walls = root => {
+  const s = 18, pad = 2, W = (30 + pad * 2) * s, H = (24 + pad * 2) * s;
+  const T = (x, y) => [(x + pad) * s, (24 + pad - y) * s];
+  const TRIM = [["y", 14, 18, 29.5], ["y", 14.3333, 18, 29.5], ["y", 9, 0.5, 18.3333], ["y", 9.3333, 0.5, 18.3333], ["x", 18, 14, 14.3333], ["x", 18.3333, 9, 9.3333], ["y", 0.5, 18, 18.3333], ["y", 23.5, 18, 18.3333], ["x", 0.5, 14, 14.3333], ["x", 29.5, 9, 9.3333]];
+  const STAGES = [
+    ["Outline", "The 30'-0\" × 24'-0\" rectangle from Lesson 2 is the outside face of the exterior walls."],
+    ["Offset 6\"", "`OFFSET` → 6 → select the rectangle → click a side. Which side?"],
+    ["Explode", "`EXPLODE` the inner rectangle so each face is its own line. Interior walls start from single lines."],
+    ["Interior walls", "Offset the inner faces to locate each 4\" interior wall."],
+    ["Trim", "`TRIM` the pieces that cross a wall junction. Click each highlighted piece."],
+    ["Done", "Clean wall junctions. Next lesson cuts door and window openings."],
+  ];
+  let stage = 0, side = null, exploded = false, interior = [], trimmed = new Set(), hints = true;
+  const OFFS = [
+    ["N–S wall", "Offset the inner WEST face (x = 6\") 17'-6\" to the east, then offset that line 4\".", [["x", 18, 0.5, 23.5], ["x", 18.3333, 0.5, 23.5]]],
+    ["West E–W wall", "Offset the inner SOUTH face 13'-6\" up, then that line 4\" up.", [["y", 14, 0.5, 29.5], ["y", 14.3333, 0.5, 29.5]]],
+    ["East E–W wall", "Offset the inner SOUTH face 8'-6\" up, then that line 4\" up.", [["y", 9, 0.5, 29.5], ["y", 9.3333, 0.5, 29.5]]],
+  ];
+  root.innerHTML = `
+    <div class="two">
+      <div style="display:flex;flex-direction:column;gap:8px;min-width:0">
+        <div class="ms" id="wlView"></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center"><div id="wlActs" style="display:flex;gap:8px;flex-wrap:wrap"></div><button class="tgl" id="wlHint" aria-pressed="true">Show trim hints</button><button class="btn small" id="wlReset">Start over</button></div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <ul class="tasks" id="wlStages"></ul>
+        <div class="readout"><div><b id="wlSize">30'-0" × 24'-0"</b><span>Outside size</span></div><div><b id="wlTrim">0 / 10</b><span>Pieces trimmed</span></div></div>
+        <div class="notice neutral" id="wlNote"></div>
+      </div>
+    </div>`;
+  const note = $("#wlNote", root), acts = $("#wlActs", root);
+  const lines = () => {
+    const L = [];
+    const rect = (a, b, c, d) => [["y", b, a, c], ["y", d, a, c], ["x", a, b, d], ["x", c, b, d]];
+    L.push(...rect(0, 0, 30, 24).map(l => [...l, "out"]));
+    if (side === "out") L.push(...rect(-0.5, -0.5, 30.5, 24.5).map(l => [...l, "bad"]));
+    if (side === "in") L.push(...rect(0.5, 0.5, 29.5, 23.5).map(l => [...l, "in"]));
+    interior.forEach(i => OFFS[i][2].forEach(l => L.push([...l, "int"])));
+    return L;
+  };
+  // split every line by trim pieces that lie on it
+  const segs = () => {
+    const out = [];
+    lines().forEach(([ax, c, a, b, kind]) => {
+      const cuts = stage >= 4 ? TRIM.map((t, i) => [t, i]).filter(([t]) => t[0] === ax && Math.abs(t[1] - c) < 1e-3 && t[2] >= a - 1e-3 && t[3] <= b + 1e-3) : [];
+      let p = a; cuts.sort((m, n) => m[0][2] - n[0][2]).forEach(([t, i]) => { if (t[2] > p) out.push({ ax, c, a: p, b: t[2], kind }); out.push({ ax, c, a: t[2], b: t[3], kind, trim: i }); p = t[3]; });
+      if (p < b) out.push({ ax, c, a: p, b, kind });
+    });
+    return out;
+  };
+  const P = (ax, c, v) => ax === "y" ? T(v, c) : T(c, v);
+  const draw = () => {
+    let g = "";
+    segs().forEach(sg => {
+      if (sg.trim !== undefined && trimmed.has(sg.trim)) return;
+      const [x1, y1] = P(sg.ax, sg.c, sg.a), [x2, y2] = P(sg.ax, sg.c, sg.b);
+      const col = sg.kind === "bad" ? "var(--aci1)" : sg.trim !== undefined && hints ? "var(--trim)" : "var(--aci2)";
+      const d = `M${x1.toFixed(1)},${y1.toFixed(1)}L${x2.toFixed(1)},${y2.toFixed(1)}`;
+      g += `<path d="${d}" stroke="${col}" stroke-width="${sg.trim !== undefined && hints ? 3 : 1.6}" ${sg.kind === "bad" ? 'stroke-dasharray="8 5"' : ""}/>`;
+      if (stage === 4) g += `<path d="${d}" stroke="transparent" stroke-width="14" style="cursor:pointer" data-seg="${sg.trim ?? "x"}" pointer-events="stroke"/>`;
+    });
+    if (exploded && stage < 4) { [[0.5, 0.5], [29.5, 0.5], [0.5, 23.5], [29.5, 23.5]].forEach(([x, y]) => { const [a, b] = T(x, y); g += `<rect x="${a - 4}" y="${b - 4}" width="8" height="8" fill="var(--sel)"/>`; }); }
+    $("#wlView", root).innerHTML = svgEl(`0 0 ${W} ${H}`, gridSVG(W, H, s) + `<g fill="none">${g}</g>`, "Wall linework for the practice house");
+    $("#wlStages", root).innerHTML = STAGES.map(([t, d], i) => `<li class="${i < stage || (i === 5 && stage === 5) ? "done" : ""}" ${i === stage ? 'style="border-color:var(--blue)"' : ""}><span class="ck">${i < stage || (i === 5 && stage === 5) ? "✓" : i + 1}</span><span><b>${t}</b>${i === stage ? "<br><span class=\"muted\">" + inline(d) + "</span>" : ""}</span></li>`).join("");
+    $("#wlTrim", root).textContent = `${trimmed.size} / 10`;
+    $("#wlSize", root).textContent = side === "out" ? `31'-0" × 25'-0"` : `30'-0" × 24'-0"`;
+    $("#wlSize", root).style.color = side === "out" ? "var(--warn)" : "";
+  };
+  const setActs = () => {
+    const b = (id, t, cls = "btn small") => `<button class="${cls}" data-act="${id}">${t}</button>`;
+    acts.innerHTML = stage === 0 ? b("go1", "Start OFFSET 6\"", "btn small primary")
+      : stage === 1 ? b("in", "Click INSIDE") + b("out", "Click OUTSIDE") + (side === "out" ? b("undo", "U (undo)") : "")
+        : stage === 2 ? b("explode", "EXPLODE", "btn small primary")
+          : stage === 3 ? OFFS.map((o, i) => interior.includes(i) ? "" : b("off" + i, "OFFSET · " + o[0])).join("")
+            : stage === 4 ? `<span class="muted">Click the orange pieces in the drawing.</span>` : "";
+  };
+  const go = () => { setActs(); draw(); };
+  acts.addEventListener("click", e => {
+    const a = e.target.closest("button")?.dataset.act; if (!a) return;
+    if (a === "go1") { stage = 1; notice(note, "Which side do you click? The 30'-0\" × 24'-0\" size is the OUTSIDE of the house.", "neutral"); }
+    else if (a === "out") { side = "out"; notice(note, "Mistake: offsetting outside makes the house 31'-0\" × 25'-0\". Type U to undo, then click inside.", "bad"); }
+    else if (a === "undo") { side = null; notice(note, "Undone. Now click INSIDE the rectangle.", "neutral"); }
+    else if (a === "in") { side = "in"; stage = 2; notice(note, "Correct. The exterior walls are 6\" thick and the outside stays 30'-0\" × 24'-0\". Now EXPLODE the inner rectangle.", ""); }
+    else if (a === "explode") { exploded = true; stage = 3; notice(note, "The inner rectangle is now 4 separate lines (see the grips). Offset the inner faces to place each interior wall.", ""); }
+    else if (a.startsWith("off")) { const i = +a.slice(3); interior.push(i); notice(note, `${OFFS[i][0]}: ${OFFS[i][1]}`, "neutral"); if (interior.length === 3) { stage = 4; notice(note, "All interior walls placed, but the lines cross each other. TRIM the 10 orange pieces so each junction is clean.", "neutral"); } }
+    go();
+  });
+  $("#wlView", root).addEventListener("click", e => {
+    if (stage !== 4) return;
+    const t = e.target.closest("[data-seg]"); if (!t) return;
+    if (t.dataset.seg === "x") { notice(note, "Keep that line. It is a wall face. Trim only the bits that cross into another wall or room.", "bad"); return; }
+    trimmed.add(+t.dataset.seg);
+    if (trimmed.size === 10) { stage = 5; notice(note, "All 10 pieces trimmed. Every wall junction is clean. Save as L4."); }
+    else notice(note, `Trimmed. ${10 - trimmed.size} to go.`, "neutral");
+    go();
+  });
+  $("#wlHint", root).addEventListener("click", e => { hints = !hints; e.currentTarget.setAttribute("aria-pressed", hints); draw(); });
+  $("#wlReset", root).addEventListener("click", () => { stage = 0; side = null; exploded = false; interior = []; trimmed = new Set(); notice(note, "Start with the outline from Lesson 2.", "neutral"); go(); });
+  notice(note, "Start with the outline from Lesson 2.", "neutral");
+  go();
+};
+
+/* ── L5 · Door Swing Lab + text height ───────────────────────────── */
+LABS.doors = root => {
+  const SC = [
+    { t: "Bath door", w: 30, hinge: "L", swing: "up", rooms: ["BATH", "HALL"], d: "2'-6\" door, hinged on the LEFT jamb, swings INTO the bath." },
+    { t: "Bedroom door", w: 32, hinge: "R", swing: "down", rooms: ["HALL", "BEDROOM"], d: "2'-8\" door, hinged on the RIGHT jamb, swings INTO the bedroom." },
+    { t: "Front door", w: 36, hinge: "R", swing: "up", rooms: ["LIVING ROOM", "PORCH"], d: "3'-0\" door, hinged on the RIGHT jamb, swings IN to the living room." },
+  ];
+  let k = 0, cfg = { w: 36, hinge: "L", swing: "down" };
+  root.innerHTML = `
+    <div class="seg" role="group" aria-label="Scenario" id="drSc">${SC.map((s, i) => `<button data-i="${i}" aria-pressed="${i === 0}">${i + 1}. ${s.t}</button>`).join("")}</div>
+    <div class="two">
+      <div class="ms" id="drView"></div>
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div class="info"><span class="eyebrow">Target</span><p id="drGoal"></p><p class="muted" style="font-size:.88rem">The dashed outline is the target. Change the door until it matches, then check.</p></div>
+        <label style="display:flex;gap:10px;align-items:center;font-weight:700">Door width <select id="drW" style="font:inherit;padding:5px 8px;border-radius:5px;border:1px solid var(--line);background:var(--paper);color:var(--ink)">${[30, 32, 36].map(w => `<option value="${w}">${fmtLen(w)}</option>`).join("")}</select></label>
+        <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn small" id="drH">MIRROR · hinge side</button><button class="btn small" id="drS">MIRROR · swing side</button><button class="btn small primary" id="drCk">Check</button></div>
+        <div class="readout"><div><b id="drR1"></b><span>Opening</span></div><div><b id="drR2"></b><span>Hinge</span></div><div><b id="drR3"></b><span>Swings into</span></div></div>
+        <div class="notice neutral" id="drNote">Use MIRROR to flip the door. Say "No" when AutoCAD asks to erase source objects.</div>
+      </div>
+    </div>
+    <div class="info" style="margin-top:4px"><span class="eyebrow">Text height calculator</span>
+      <div style="display:flex;gap:14px;flex-wrap:wrap;align-items:center">
+        <label>Printed height <select id="txP" style="font:inherit;padding:4px 6px;border-radius:5px;border:1px solid var(--line);background:var(--paper);color:var(--ink)">${[["3/32\"", 3 / 32], ["1/8\"", 1 / 8], ["3/16\"", 3 / 16], ["1/4\"", 1 / 4]].map(([t, v]) => `<option value="${v}" ${t === '3/16"' ? "selected" : ""}>${t}</option>`).join("")}</select></label>
+        <label>Plot scale <select id="txS" style="font:inherit;padding:4px 6px;border-radius:5px;border:1px solid var(--line);background:var(--paper);color:var(--ink)">${[["1/8\" = 1'-0\"", 96], ["3/16\" = 1'-0\"", 64], ["1/4\" = 1'-0\"", 48], ["1/2\" = 1'-0\"", 24]].map(([t, v]) => `<option value="${v}" ${v === 48 ? "selected" : ""}>${t}</option>`).join("")}</select></label>
+        <span>Model-space text height: <b class="cmd" id="txOut"></b></span>
+      </div>
+      <p class="muted" id="txWhy" style="font-size:.9rem"></p>
+    </div>`;
+  const note = $("#drNote", root);
+  const s = 46, W = 10 * s, H = 9 * s, cx = 5, wy = 4.5; // wall centered vertically, 4" thick
+  const T = (x, y) => [x * s, (9 - y) * s];
+  const doorPath = (c, ghost) => {
+    const w = c.w / 12, x0 = cx - w / 2, x1 = cx + w / 2;
+    const hx = c.hinge === "L" ? x0 : x1, ox = c.hinge === "L" ? x1 : x0;
+    const face = c.swing === "up" ? wy + 1 / 6 : wy - 1 / 6, dirY = c.swing === "up" ? 1 : -1;
+    const [ha, hb] = T(hx, face), [la, lb] = T(hx, face + dirY * w), [ea, eb] = T(ox, face);
+    const cross = (0) * (0) - (dirY * w) * (ox - hx);
+    const sweep = cross > 0 ? 0 : 1;
+    return `<path d="M${ha},${hb}L${la},${lb}M${la},${lb}A${w * s} ${w * s} 0 0 ${sweep} ${ea},${eb}" fill="none" stroke="${ghost ? "var(--ms-muted)" : "var(--aci4)"}" stroke-width="${ghost ? 1.5 : 2.2}" ${ghost ? 'stroke-dasharray="6 5"' : ""}/>${ghost ? "" : `<rect x="${(T(x0, 0)[0] - 3)}" y="${T(0, wy + 1 / 6)[1]}" width="${(x1 - x0) * s + 6}" height="${s / 3}" fill="none" stroke="var(--aci4)" stroke-width="1" stroke-dasharray="2 3"/>`}`;
+  };
+  const draw = () => {
+    const sc = SC[k], w = cfg.w / 12, x0 = cx - w / 2, x1 = cx + w / 2;
+    const wall = (a, b) => { const [p, q] = T(a, wy + 1 / 6), [r, t] = T(b, wy - 1 / 6); return `<rect x="${p}" y="${q}" width="${r - p}" height="${t - q}" fill="var(--aci2)"/>`; };
+    const lbl = (t, y) => { const [a, b] = T(cx, y); return `<text x="${a}" y="${b}" text-anchor="middle" font-family="var(--mono)" font-size="15" fill="var(--aci7)">${t}</text>`; };
+    $("#drView", root).innerHTML = svgEl(`0 0 ${W} ${H}`, gridSVG(W, H, s / 2, 1, 2) + wall(0.3, x0) + wall(x1, 9.7) + doorPath(sc, true) + doorPath(cfg, false) + lbl(sc.rooms[0], 8.2) + lbl(sc.rooms[1], 0.5), "Door in a 4 inch wall with a dashed target outline");
+    $("#drGoal", root).innerHTML = `<b>${sc.t}:</b> ${esc(sc.d)}`;
+    $("#drW", root).value = cfg.w;
+    $("#drR1", root).textContent = fmtLen(cfg.w);
+    $("#drR2", root).textContent = cfg.hinge === "L" ? "Left jamb" : "Right jamb";
+    $("#drR3", root).textContent = cfg.swing === "up" ? sc.rooms[0] : sc.rooms[1];
+  };
+  $("#drW", root).addEventListener("change", e => { cfg.w = +e.target.value; draw(); });
+  $("#drH", root).addEventListener("click", () => { cfg.hinge = cfg.hinge === "L" ? "R" : "L"; notice(note, "MIRROR across the opening's center line moved the hinge to the other jamb.", "neutral"); draw(); });
+  $("#drS", root).addEventListener("click", () => { cfg.swing = cfg.swing === "up" ? "down" : "up"; notice(note, "MIRROR across the wall's center line flipped the swing into the other room.", "neutral"); draw(); });
+  $("#drCk", root).addEventListener("click", () => {
+    const sc = SC[k], errs = [];
+    if (cfg.w !== sc.w) errs.push(`width should be ${fmtLen(sc.w)} (the opening must match the door)`);
+    if (cfg.hinge !== sc.hinge) errs.push("hinge is on the wrong jamb");
+    if (cfg.swing !== sc.swing) errs.push(`door should swing into the ${sc.swing === "up" ? sc.rooms[0] : sc.rooms[1]}`);
+    if (!errs.length) { const nx = k < SC.length - 1; notice(note, `Correct! ${sc.t} matches.${nx ? " Try the next scenario." : " All three doors done."}`); }
+    else notice(note, "Not yet: " + errs.join("; ") + ".", "bad");
+  });
+  $$("#drSc button", root).forEach(b => b.addEventListener("click", () => { k = +b.dataset.i; cfg = { w: 36, hinge: k === 2 ? "L" : "L", swing: "down" }; $$("#drSc button", root).forEach(x => x.setAttribute("aria-pressed", x === b)); notice(note, "Use MIRROR to flip the door. Say \"No\" when AutoCAD asks to erase source objects.", "neutral"); draw(); }));
+  const calc = () => { const p = +$("#txP", root).value, f = +$("#txS", root).value; $("#txOut", root).textContent = fmtLen(p * f); $("#txWhy", root).textContent = `${$("#txP", root).selectedOptions[0].text} on paper × scale factor ${f} = ${fmtLen(p * f)} in model space. At 1/4" = 1'-0", room names at 3/16" are 9" tall in the model.`; };
+  $("#txP", root).addEventListener("change", calc); $("#txS", root).addEventListener("change", calc);
+  draw(); calc();
+};
+
+/* ── L6 · Sheet Setup & Scale ────────────────────────────────────── */
+LABS.sheet = root => {
+  const SCALES = [["1/8\" = 1'-0\"", 96], ["3/16\" = 1'-0\"", 64], ["1/4\" = 1'-0\"", 48], ["3/8\" = 1'-0\"", 32], ["1/2\" = 1'-0\"", 24]];
+  const VP = { x: 0.75, y: 0.75, w: 12.5, h: 9.5 }, EXT = { x0: -3, x1: 30.5, y0: -3, y1: 24.5 };
+  const FIT = Math.max((EXT.x1 - EXT.x0) * 12 / VP.w, (EXT.y1 - EXT.y0) * 12 / VP.h);
+  let f = 48, custom = false, locked = false;
+  root.innerHTML = `
+    <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center">
+      <div class="seg" role="group" aria-label="Viewport scale" id="shSc">${SCALES.map(([t, v]) => `<button data-f="${v}" aria-pressed="${v === 48}">${t}</button>`).join("")}</div>
+      <button class="tgl" id="shFit" aria-pressed="false">Scale to fit</button>
+    </div>
+    <div class="two">
+      <div style="display:flex;flex-direction:column;gap:8px;min-width:0"><div id="shView" style="border-radius:6px;overflow:hidden;background:#C9CFD6;padding:12px"></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap"><button class="tgl" id="shLock" aria-pressed="false">Viewport: unlocked</button><button class="btn small" id="shWheel">Roll the mouse wheel inside the viewport</button></div></div>
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div class="readout"><div><b id="shR1"></b><span>Viewport scale</span></div><div><b id="shR2"></b><span>30'-0" wall prints</span></div><div><b id="shR3"></b><span>DIMSCALE (overall)</span></div><div><b id="shR4"></b><span>Text for 3/16" print</span></div></div>
+        <div class="notice" id="shNote"></div>
+        <div class="info"><span class="eyebrow">Plot settings</span><p>Printer: <span class="cmd">DWG To PDF.pc3</span> · Paper: <span class="cmd">ANSI B 17×11</span> · Plot area: <span class="cmd">Layout</span> · Scale: <span class="cmd">1:1</span> · Style: <span class="cmd">monochrome.ctb</span></p></div>
+      </div>
+    </div>`;
+  const draw = () => {
+    const k = 12 / f, cxp = VP.x + VP.w / 2, cyp = VP.y + VP.h / 2, mx = (EXT.x0 + EXT.x1) / 2, my = (EXT.y0 + EXT.y1) / 2;
+    const T = (x, y) => [cxp + (x - mx) * k, cyp - (y - my) * k];
+    let g = "";
+    planParts(T, k).forEach(p => {
+      const wall = p.layer === "A-WALL", txt = p.layer === "A-TEXT" || p.layer === "A-DIMS";
+      g += `<g ${wall ? 'fill="#1B2127" stroke="none"' : `fill="${txt ? "#1B2127" : "none"}" stroke="#1B2127" stroke-width="${p.layer === "A-HATCH" ? 0.4 : 0.8}" vector-effect="non-scaling-stroke"`}>${p.svg.replace(/<(path|rect|circle)/g, '<$1 vector-effect="non-scaling-stroke"')}</g>`;
+    });
+    const scTxt = custom ? `1:${(f / 12).toFixed(2)}" (custom)` : SCALES.find(x => x[1] === f)[0];
+    const tb = `<g font-family="var(--display)" fill="#1B2127">
+      <rect x="13.5" y="0.5" width="3" height="10" fill="none" stroke="#1B2127" stroke-width="1.6" vector-effect="non-scaling-stroke"/>
+      ${[2.2, 4.2, 6.6, 8.2, 9.3].map(y => `<path d="M13.5,${y}H16.5" stroke="#1B2127" stroke-width="0.8" vector-effect="non-scaling-stroke"/>`).join("")}
+      <text x="13.7" y="1.05" font-size=".2" font-weight="700">MR. C</text><text x="13.7" y="1.4" font-size=".15">ARCHITECTURAL DESIGN I</text><text x="13.7" y="1.75" font-size=".13" fill="#56616C">Digital Classroom</text>
+      <text x="13.7" y="2.6" font-size=".12" fill="#56616C">PROJECT</text><text x="13.7" y="3.0" font-size=".22" font-weight="700">PRACTICE HOUSE</text><text x="13.7" y="3.35" font-size=".14">30'-0" × 24'-0"</text>
+      <text x="13.7" y="4.6" font-size=".12" fill="#56616C">SHEET TITLE</text><text x="13.7" y="5.0" font-size=".24" font-weight="700">FLOOR PLAN</text>
+      <text x="13.7" y="7.0" font-size=".12" fill="#56616C">SCALE</text><text x="13.7" y="7.4" font-size=".2" font-weight="700" fill="${custom ? "#A8501C" : "#1B2127"}">${esc(scTxt)}</text>
+      <text x="13.7" y="8.55" font-size=".12" fill="#56616C">DRAWN BY</text><text x="13.7" y="8.95" font-size=".16">________</text>
+      <text x="13.7" y="9.65" font-size=".12" fill="#56616C">SHEET</text><text x="13.7" y="10.25" font-size=".42" font-weight="700">A-101</text></g>`;
+    const fits = (EXT.x1 - EXT.x0) * k <= VP.w + 1e-6 && (EXT.y1 - EXT.y0) * k <= VP.h + 1e-6;
+    $("#shView", root).innerHTML = svgEl("0 0 17 11", `<defs><clipPath id="vpc"><rect x="${VP.x}" y="${VP.y}" width="${VP.w}" height="${VP.h}"/></clipPath></defs>
+      <rect width="17" height="11" fill="#FFFFFF"/><rect x="0.5" y="0.5" width="16" height="10" fill="none" stroke="#1B2127" stroke-width="2" vector-effect="non-scaling-stroke"/>
+      <g clip-path="url(#vpc)">${g}</g>
+      <rect x="${VP.x}" y="${VP.y}" width="${VP.w}" height="${VP.h}" fill="none" stroke="${locked ? "#2C7A4B" : "#4C9BFF"}" stroke-width="1.2" stroke-dasharray="${locked ? "0" : "5 4"}" vector-effect="non-scaling-stroke"/>
+      ${tb}`, "ANSI B layout sheet with viewport and title block", 'style="display:block;width:100%;height:auto;box-shadow:0 4px 14px rgba(0,0,0,.25)"');
+    $("#shR1", root).textContent = custom ? `1:${(f / 12).toFixed(2)}` : SCALES.find(x => x[1] === f)[0].split(" =")[0];
+    $("#shR2", root).textContent = fmtLen(360 / f);
+    $("#shR3", root).textContent = custom ? "?" : f;
+    $("#shR4", root).textContent = custom ? "?" : fmtLen(3 / 16 * f);
+    const n = $("#shNote", root);
+    if (custom) notice(n, "Custom scale. The plan looks big, but nobody can measure it with an architect's scale and the dimensions and text no longer match. Pick a standard scale.", "bad");
+    else if (!fits) notice(n, `At ${SCALES.find(x => x[1] === f)[0]} the plan and its dimensions don't fit in the viewport. Use a smaller scale or a bigger sheet.`, "bad");
+    else notice(n, f === 48 ? "1/4\" = 1'-0\": the class standard. The 30'-0\" wall prints 7 1/2\" long. Set DIMSCALE 48 and lock the viewport." : `Fits. At this scale DIMSCALE is ${f} and 3/16" text is ${fmtLen(3 / 16 * f)} tall in the model.`, f === 48 ? "" : "neutral");
+    $$("#shSc button", root).forEach(b => b.setAttribute("aria-pressed", !custom && +b.dataset.f === f));
+    $("#shFit", root).setAttribute("aria-pressed", custom && Math.abs(f - FIT) < 1e-6);
+  };
+  $$("#shSc button", root).forEach(b => b.addEventListener("click", () => { f = +b.dataset.f; custom = false; draw(); }));
+  $("#shFit", root).addEventListener("click", () => { f = FIT; custom = true; draw(); });
+  $("#shLock", root).addEventListener("click", e => { locked = !locked; e.currentTarget.setAttribute("aria-pressed", locked); e.currentTarget.textContent = "Viewport: " + (locked ? "locked" : "unlocked"); draw(); });
+  $("#shWheel", root).addEventListener("click", () => {
+    if (locked) { draw(); notice($("#shNote", root), "Locked: the whole sheet zoomed on screen, but the viewport scale didn't change. That's why we lock viewports.", ""); return; }
+    f = f * 0.9; custom = true; draw();
+    notice($("#shNote", root), "Unlocked: rolling the wheel INSIDE the viewport zoomed the model and destroyed the scale. Pick the scale again, then lock the viewport.", "bad");
+  });
+  draw();
+};
+
+/* Lesson site behavior: Teacher mode, Present view, vocab reveal, AutoCAD step tracker, quick check, exit ticket, worksheet download. */
+(function () {
+  const KEY = "acad-" + document.body.dataset.lesson;
+
+  /* Teacher mode */
+  const tBtn = $("#teachBtn");
+  const setTeacher = on => { document.body.classList.toggle("teacher", on); tBtn.setAttribute("aria-pressed", on); store.set(KEY + "-teacher", on); };
+  tBtn.addEventListener("click", () => setTeacher(!document.body.classList.contains("teacher")));
+  setTeacher(store.get(KEY + "-teacher", false));
+
+  /* Present view: one numbered section per screen */
+  let slides = [];
+  const pick = () => slides = $$(".wrap > .slide").filter(x => !x.classList.contains("t-only") || document.body.classList.contains("teacher"));
+  let si = 0;
+  const lbl = $("#pLbl");
+  const show = i => {
+    si = Math.max(0, Math.min(slides.length - 1, i));
+    slides.forEach((s, k) => s.classList.toggle("on", k === si));
+    const t = slides[si].dataset.title || "";
+    lbl.textContent = `${String(si + 1).padStart(2, "0")} / ${String(slides.length).padStart(2, "0")} · ${t}`;
+    window.scrollTo({ top: 0 });
+  };
+  const enter = () => { pick(); document.body.classList.add("present"); show(0); document.documentElement.requestFullscreen?.().catch(() => {}); };
+  const exit = () => { document.body.classList.remove("present"); $$(".wrap > .slide").forEach(s => s.classList.remove("on")); if (document.fullscreenElement) document.exitFullscreen?.().catch(() => {}); };
+  $("#presentBtn").addEventListener("click", enter);
+  $("#pPrev").addEventListener("click", () => show(si - 1));
+  $("#pNext").addEventListener("click", () => show(si + 1));
+  $("#pExit").addEventListener("click", exit);
+  document.addEventListener("keydown", e => {
+    if (!document.body.classList.contains("present")) return;
+    if (e.target.closest("input,textarea,select")) return;
+    if (e.key === "ArrowRight" || e.key === "PageDown") { e.preventDefault(); show(si + 1); }
+    if (e.key === "ArrowLeft" || e.key === "PageUp") { e.preventDefault(); show(si - 1); }
+    if (e.key === "Escape") exit();
+  });
+
+  /* Vocabulary cards */
+  $$(".vcard").forEach(c => c.addEventListener("click", () => c.setAttribute("aria-pressed", c.getAttribute("aria-pressed") !== "true")));
+  const vAll = $("#vocabAll");
+  if (vAll) vAll.addEventListener("click", () => { const any = $$(".vcard").some(c => c.getAttribute("aria-pressed") === "false"); $$(".vcard").forEach(c => c.setAttribute("aria-pressed", any)); vAll.textContent = any ? "Hide all" : "Reveal all"; });
+
+  /* AutoCAD steps tracker */
+  const done = store.get(KEY + "-steps", []);
+  const steps = $$(".dostep");
+  const upd = () => {
+    const n = steps.filter(s => s.querySelector("input").checked).length;
+    $("#stepProg").style.width = (n / steps.length * 100) + "%";
+    $("#stepCount").textContent = `${n} of ${steps.length} done`;
+  };
+  steps.forEach((s, i) => {
+    const cb = s.querySelector("input");
+    cb.checked = done.includes(i); s.classList.toggle("done", cb.checked);
+    cb.addEventListener("change", () => {
+      s.classList.toggle("done", cb.checked);
+      store.set(KEY + "-steps", steps.map((x, k) => x.querySelector("input").checked ? k : -1).filter(k => k >= 0));
+      upd();
+    });
+  });
+  upd();
+  $("#stepReset").addEventListener("click", () => { steps.forEach(s => { s.querySelector("input").checked = false; s.classList.remove("done"); }); store.set(KEY + "-steps", []); upd(); });
+
+  /* Quick check */
+  const items = $$(".qitem");
+  const score = () => {
+    const answered = items.filter(q => q.dataset.done), right = answered.filter(q => q.dataset.done === "1");
+    $("#qScore").textContent = `${right.length} / ${items.length}`;
+    $("#qMsg").textContent = answered.length === items.length ? (right.length === items.length ? "Perfect. You're ready for the AutoCAD steps." : right.length >= items.length - 1 ? "Almost there. Review the one you missed." : "Re-read the lecture sections for the ones you missed, then try again.") : "";
+  };
+  items.forEach(q => {
+    const a = +q.dataset.a, fb = $(".fb", q), ex = q.dataset.ex;
+    $$(".opt", q).forEach((o, i) => o.addEventListener("click", () => {
+      if (q.dataset.done) return;
+      const ok = i === a;
+      q.dataset.done = ok ? "1" : "0";
+      o.classList.add(ok ? "right" : "wrong");
+      if (!ok) $$(".opt", q)[a].classList.add("right");
+      fb.textContent = (ok ? "Correct. " : "Not quite. ") + ex;
+      fb.className = "fb " + (ok ? "ok" : "no");
+      score();
+    }));
+  });
+  $("#qReset").addEventListener("click", () => { items.forEach(q => { delete q.dataset.done; $$(".opt", q).forEach(o => o.classList.remove("right", "wrong")); const f = $(".fb", q); f.textContent = ""; }); score(); });
+  score();
+
+  /* Exit ticket draft */
+  const et = $("#exitTicket");
+  if (et) { et.value = store.get(KEY + "-exit", ""); et.addEventListener("input", () => store.set(KEY + "-exit", et.value)); }
+
+  $$("[data-ws]").forEach(b => b.addEventListener("click", () => saveWorksheet(b, b.dataset.ws, b.dataset.name)));
+})();
+</script>
+<script>document.getElementById("heroPlan").innerHTML = planSVG({"s": 18, "pad": 2.6, "dims": false}); LABS["walls"](document.getElementById("labRoot"));</script>

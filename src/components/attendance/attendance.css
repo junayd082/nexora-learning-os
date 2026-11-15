@@ -1,0 +1,95 @@
+/* Attendance register — paper in every theme and scene, like the printed sheets teachers know. */
+.att-paper {
+  --a-ink: #1c1c21; --a-muted: #6b6b76; --a-rule: #1c1c2133; --a-heavy: #1c1c21; --a-head: #fff1a6; --a-head-2: #fff8cf;
+  --a-p: #1f8a4c; --a-p-bg: #e3f5e9; --a-a: #c2362f; --a-a-bg: #fde6e4; --a-t: #a8660b; --a-t-bg: #fff1d6; --a-e: #2f6fb3; --a-e-bg: #e4eefb;
+  --a-today: #ff7a1a;
+  position: relative; background: #fffef9; color: var(--a-ink) !important; border-radius: 10px; text-shadow: none;
+  box-shadow: 0 1px 0 rgb(0 0 0 / .04), 0 18px 50px -20px rgb(0 0 0 / .55), 0 0 0 1px rgb(0 0 0 / .08);
+}
+.att-paper * { text-shadow: none !important; }
+.att-paper :is(h1, h2, h3, p, span, label, div, li, small, th, td, b, strong) { color: inherit; }
+.att-scroll { overflow-x: auto; border-radius: 10px; }
+.att-grid { border-collapse: separate; border-spacing: 0; width: 100%; font-size: 13px; line-height: 1.2; }
+.att-grid th, .att-grid td { border-right: 1px solid var(--a-rule); border-bottom: 1px solid var(--a-rule); padding: 0; text-align: center; }
+.att-grid thead th { background: var(--a-head); font-weight: 800; color: var(--a-ink); }
+.att-grid thead tr:first-child th { font-size: 14px; letter-spacing: .01em; padding: 7px 6px 5px; border-bottom-color: var(--a-heavy); }
+.att-grid thead tr:nth-child(2) th { background: var(--a-head-2); padding: 0; border-bottom: 2px solid var(--a-heavy); }
+.att-grid .att-namehead { text-align: left; font-size: 20px; padding: 6px 14px; min-width: 190px; border-bottom: 2px solid var(--a-heavy) !important; }
+.att-grid .att-wk { border-left: 2px solid var(--a-heavy); }
+.att-grid .att-sum { background: #f6f3e6; font-family: 'IBM Plex Mono', ui-monospace, monospace; font-size: 12px; min-width: 52px; }
+.att-grid thead .att-sum { font-family: inherit; font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .06em; padding: 4px 6px; }
+
+/* sticky name column */
+.att-grid .att-name { position: sticky; left: 0; z-index: 2; background: #fffef9; text-align: left; padding: 0 12px; white-space: nowrap; font-weight: 600; min-width: 190px; border-right: 2px solid var(--a-heavy); }
+.att-grid thead .att-name, .att-grid .att-namehead { position: sticky; left: 0; z-index: 3; background: var(--a-head); border-right: 2px solid var(--a-heavy); }
+.att-grid .att-num { display: inline-block; width: 22px; font: 500 11px/1 'IBM Plex Mono', ui-monospace, monospace; color: var(--a-muted); }
+.att-grid tbody tr:hover .att-name { background: #fff8de; }
+
+/* day headers */
+.att-day { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; width: 100%; min-height: 34px; padding: 3px 0; border: 0; background: transparent; color: var(--a-ink); font: 800 12px/1 inherit; cursor: default; }
+.att-day small { font: 500 10px/1 'IBM Plex Mono', ui-monospace, monospace; color: var(--a-muted); }
+.att-day[data-can='1'] { cursor: pointer; }
+.att-day[data-can='1']:hover { background: #ffe57a; }
+.att-day:focus-visible { outline: 2px solid var(--a-today); outline-offset: -2px; }
+
+/* cells */
+.att-cell { display: grid; place-items: center; width: 100%; min-width: 30px; height: 30px; border: 0; background: transparent; color: var(--a-ink); font: 800 13px/1 'IBM Plex Mono', ui-monospace, monospace; cursor: pointer; transition: background .12s ease, transform .12s ease; }
+.att-week .att-cell { min-width: 64px; height: 38px; font-size: 14px; }
+.att-cell:hover { background: #0000000b; }
+.att-cell:focus-visible { outline: 2px solid var(--a-today); outline-offset: -2px; position: relative; z-index: 1; }
+.att-cell:active { transform: scale(.94); }
+.att-cell[data-m='present'] { color: var(--a-p); background: var(--a-p-bg); }
+.att-cell[data-m='absent'] { color: var(--a-a); background: var(--a-a-bg); }
+.att-cell[data-m='tardy'] { color: var(--a-t); background: var(--a-t-bg); }
+.att-cell[data-m='excused'] { color: var(--a-e); background: var(--a-e-bg); }
+.att-cell:disabled { cursor: default; }
+.att-cell:disabled:hover { background: transparent; }
+.att-cell[data-m]:disabled:hover { filter: none; }
+.att-cell .att-pend { position: absolute; }
+
+/* column states */
+.att-off { background-image: repeating-linear-gradient(135deg, #0000 0 6px, #00000009 6px 7px); }
+.att-future { opacity: .4; }
+.att-grid .att-today { box-shadow: inset 2px 0 0 var(--a-today), inset -2px 0 0 var(--a-today); }
+.att-grid thead .att-today { background: #ffd9b8 !important; }
+.att-grid tfoot td { background: #f6f3e6; font: 600 11px/1 'IBM Plex Mono', ui-monospace, monospace; color: var(--a-muted); padding: 7px 2px; }
+.att-grid tfoot .att-name { background: #f6f3e6; font-family: inherit; font-size: 11px; text-transform: uppercase; letter-spacing: .08em; }
+
+/* legend */
+.att-legend { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px; padding: 10px 14px; border-top: 1px solid var(--a-rule); font-size: 12px; color: var(--a-muted); }
+.att-key { display: inline-grid; place-items: center; width: 22px; height: 20px; border-radius: 4px; font: 800 11px/1 'IBM Plex Mono', ui-monospace, monospace; margin-right: 5px; vertical-align: -5px; }
+.att-key[data-m='present'] { color: var(--a-p); background: var(--a-p-bg); }
+.att-key[data-m='absent'] { color: var(--a-a); background: var(--a-a-bg); }
+.att-key[data-m='tardy'] { color: var(--a-t); background: var(--a-t-bg); }
+.att-key[data-m='excused'] { color: var(--a-e); background: var(--a-e-bg); }
+
+/* calendar week picker */
+.att-cal { width: 312px; padding: 12px; }
+.att-cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); }
+.att-cal-dow { font: 600 10.5px/1 'IBM Plex Mono', ui-monospace, monospace; text-align: center; color: rgb(var(--faint)); padding: 6px 0; }
+.att-cal-row { display: contents; }
+.att-cal-week { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(7, 1fr) ; position: relative; border-radius: 8px; border: 0; background: transparent; padding: 0; cursor: pointer; color: inherit; }
+.att-cal-week:hover { background: rgb(var(--ink) / .06); }
+.att-cal-week[aria-current='true'] { background: rgb(var(--nx-ember) / .16); box-shadow: inset 0 0 0 1px rgb(var(--nx-ember) / .55); }
+.att-cal-day { position: relative; height: 34px; display: grid; place-items: center; font-size: 13px; font-variant-numeric: tabular-nums; }
+.att-cal-day[data-out='1'] { color: rgb(var(--faint)); }
+.att-cal-day[data-we='1'] { color: rgb(var(--faint)); }
+.att-cal-day[data-today='1'] span { width: 26px; height: 26px; border-radius: 9999px; display: grid; place-items: center; box-shadow: 0 0 0 1.5px rgb(var(--nx-ember)); font-weight: 700; }
+.att-cal-dot { position: absolute; bottom: 3px; left: 50%; width: 4px; height: 4px; margin-left: -2px; border-radius: 9999px; background: rgb(var(--ok)); }
+.att-cal-dot[data-a='1'] { background: rgb(var(--bad)); }
+
+@media print {
+  .att-paper { box-shadow: none; }
+  .att-scroll { overflow: visible; }
+  .att-cell { min-width: 0 !important; }
+}
+
+/* month view packs five weeks: slimmer names */
+.att-paper:not(.att-week) .att-grid .att-name, .att-paper:not(.att-week) .att-grid .att-namehead { min-width: 150px; }
+/* phones: names stay pinned, days scroll beside them */
+@media (max-width: 640px) {
+  .att-grid .att-name, .att-grid .att-namehead { min-width: 118px !important; padding: 0 8px; font-size: 12.5px; }
+  .att-grid .att-namehead { font-size: 15px; }
+  .att-grid .att-num { width: 18px; }
+  .att-week .att-cell { min-width: 46px; height: 36px; }
+}

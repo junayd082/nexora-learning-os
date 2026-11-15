@@ -1,0 +1,58 @@
+/* NEXORA Live — the product demonstration stage. Builds on keynote.css (.kn stage, chrome, captions). */
+.dm-wrap { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; padding: 64px 3vw 118px; z-index: 2; pointer-events: none; }
+.dm-scaler { transform-origin: center center; will-change: transform; }
+.dm-window { width: 1280px; border-radius: 14px; overflow: hidden; background: #0b0c10; box-shadow: 0 0 0 1px #ffffff14, 0 50px 140px -30px #000, 0 0 160px -40px var(--dm-glow, #ff7a1a55); }
+.dm-titlebar { height: 34px; display: flex; align-items: center; gap: 10px; padding: 0 14px; background: linear-gradient(#1c1d24, #15161b); border-bottom: 1px solid #ffffff10; }
+.dm-dots { display: flex; gap: 7px; } .dm-dots i { width: 11px; height: 11px; border-radius: 9999px; display: block; }
+.dm-url { flex: 1; max-width: 560px; margin: 0 auto; height: 22px; border-radius: 7px; background: #0e0f13; border: 1px solid #ffffff10; display: flex; align-items: center; gap: 7px; padding: 0 10px;
+  font: 500 11.5px/1 'IBM Plex Mono', ui-monospace, monospace; color: #9b978f; overflow: hidden; white-space: nowrap; }
+.dm-url b { color: #e9e5de; font-weight: 500; }
+.dm-viewport { position: relative; height: 760px; overflow: hidden; background: rgb(var(--bg)); color: rgb(var(--ink)); font-family: 'Manrope Variable', Manrope, system-ui, sans-serif; }
+.dm-viewport .dm-ambient { position: absolute; inset: 0; background: radial-gradient(60% 50% at 75% 0%, #8758ff1f, transparent 70%), radial-gradient(50% 40% at 10% 100%, #ff7a1a17, transparent 70%); pointer-events: none; }
+
+/* app chrome inside the window */
+.dm-app { position: absolute; inset: 0; display: grid; grid-template-columns: 216px 1fr; }
+.dm-side { border-right: 1px solid rgb(var(--line) / .08); background: rgb(var(--sunk) / .7); padding: 18px 12px; display: flex; flex-direction: column; gap: 3px; }
+.dm-nav { display: flex; align-items: center; gap: 11px; height: 33px; padding: 0 10px; border-radius: 8px; font-size: 13.5px; color: rgb(var(--muted)); }
+.dm-nav.on { color: rgb(var(--ink)); font-weight: 600; background: rgb(255 122 26 / .1); box-shadow: inset 2px 0 0 #ff7a1a; }
+.dm-head { height: 52px; display: flex; align-items: center; gap: 10px; padding: 0 20px; border-bottom: 1px solid rgb(var(--line) / .08); background: rgb(var(--sunk) / .55); }
+.dm-search { width: 320px; height: 32px; border-radius: 8px; border: 1px solid rgb(var(--line) / .1); background: rgb(var(--panel) / .6); display: flex; align-items: center; gap: 8px; padding: 0 10px; font-size: 12.5px; color: rgb(var(--faint)); }
+.dm-icon { position: relative; width: 34px; height: 34px; border-radius: 9px; display: grid; place-items: center; color: rgb(var(--muted)); }
+.dm-badge { position: absolute; top: 2px; right: 1px; min-width: 16px; height: 16px; border-radius: 9999px; background: #ff7a1a; color: #140a04; font-size: 10px; font-weight: 800; display: grid; place-items: center; padding: 0 4px; }
+.dm-avatar { width: 30px; height: 30px; border-radius: 9999px; display: grid; place-items: center; font-size: 11px; font-weight: 800; color: #fff; background: linear-gradient(135deg, #ff7a1a, #c044b7 60%, #8758ff); }
+.dm-main { position: relative; overflow: hidden; }
+.dm-page { position: absolute; inset: 52px 0 0 0; padding: 26px 30px; overflow: hidden; }
+
+/* small UI atoms */
+.dm-in { transition: opacity .55s ease, transform .7s cubic-bezier(.22,1,.36,1); }
+.dm-hide { opacity: 0; transform: translateY(10px); }
+.dm-pop { transition: opacity .3s ease, transform .4s cubic-bezier(.22,1,.36,1); transform-origin: top right; }
+.dm-pop.dm-hide { transform: scale(.96) translateY(-4px); }
+.dm-toast { position: absolute; left: 50%; bottom: 26px; transform: translateX(-50%); padding: 10px 16px; border-radius: 12px; background: #1d1f27; border: 1px solid #5cd49a55; color: #e9e5de; font-size: 13px; font-weight: 600; box-shadow: 0 20px 50px -10px #000;
+  display: flex; align-items: center; gap: 8px; transition: opacity .4s ease, transform .5s cubic-bezier(.22,1,.36,1); }
+.dm-toast.dm-hide { transform: translate(-50%, 14px); }
+.dm-hl { box-shadow: 0 0 0 2px #ff7a1a, 0 0 24px -2px #ff7a1a99 !important; transition: box-shadow .4s ease; }
+.dm-caret::after { content: ''; display: inline-block; width: 1.5px; height: 1.05em; margin-left: 1px; vertical-align: -0.15em; background: currentColor; animation: dm-blink 1s steps(1) infinite; }
+@keyframes dm-blink { 50% { opacity: 0 } }
+.dm-spin { animation: dm-spin 1s linear infinite; } @keyframes dm-spin { to { transform: rotate(360deg) } }
+
+/* the virtual cursor */
+.dm-cursor { position: absolute; left: 0; top: 0; z-index: 60; pointer-events: none; width: 22px; height: 22px; will-change: transform; filter: drop-shadow(0 2px 4px rgb(0 0 0 / .5)); transition: opacity .4s ease; }
+.dm-cursor svg { transition: transform .12s ease; transform-origin: 3px 3px; }
+.dm-cursor.down svg { transform: scale(.86); }
+.dm-ripple { position: absolute; z-index: 59; width: 44px; height: 44px; margin: -22px 0 0 -22px; border-radius: 9999px; border: 2px solid #ff9a3c; pointer-events: none; animation: dm-ripple .6s ease-out forwards; }
+@keyframes dm-ripple { from { transform: scale(.3); opacity: .9 } to { transform: scale(1.3); opacity: 0 } }
+
+/* closing call to action: opens the real demo class */
+.dm-open { position: absolute; left: 50%; bottom: 128px; z-index: 7; transform: translateX(-50%); padding: 11px 20px; font-size: 15px; animation: dm-open 1s 2s cubic-bezier(.22,1,.36,1) both; }
+@keyframes dm-open { from { opacity: 0; transform: translate(-50%, 12px) } to { opacity: 1; transform: translate(-50%, 0) } }
+
+/* lower third */
+.dm-lower { position: absolute; left: max(24px, 3vw); top: 22px; z-index: 6; display: flex; align-items: center; gap: 12px; pointer-events: none; }
+.dm-chap { font: 600 12px/1 'IBM Plex Mono', ui-monospace, monospace; letter-spacing: .26em; text-transform: uppercase; color: #d8d3cc; }
+.dm-clock { padding: 6px 10px; border-radius: 9999px; border: 1px solid #ffffff22; background: #ffffff0d; font: 600 12px/1 'IBM Plex Mono', monospace; color: #ffb26b; letter-spacing: .06em; }
+.dm-role { padding: 6px 10px; border-radius: 9999px; font: 700 11px/1 'IBM Plex Mono', monospace; letter-spacing: .12em; text-transform: uppercase; }
+.dm-lower { transition: opacity .6s ease; }
+.kn.idle .dm-lower { opacity: .55; }
+
+@media (prefers-reduced-motion: reduce) { .dm-in, .dm-pop, .dm-toast { transition: opacity .2s ease !important; transform: none !important; } }
