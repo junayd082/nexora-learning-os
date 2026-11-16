@@ -32,6 +32,9 @@ jobs:
       - name: Typecheck
         run: npm run typecheck
 
+      - name: Core unit tests
+        run: node --experimental-strip-types --test tests/*.test.mjs
+
       - name: Production build
         run: npm run build
 
